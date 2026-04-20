@@ -133,8 +133,23 @@ function Contact() {
           text="unforgettable."
           as="h1"
           className="font-display text-5xl md:text-9xl font-bold leading-[0.9] block text-gradient-cyan"
-          delay={300}
-        />
+
+        {/* Pulse beams Let's talk */}
+        <div className="mt-16">
+          <PulseBeams
+            beams={beams}
+            width={858}
+            height={434}
+            className="w-full"
+            background={
+              <div className="absolute inset-0 bg-aurora opacity-30 pointer-events-none" />
+            }
+          >
+            <NeonButton variant="solid" size="lg" className="rounded-full text-base px-10 py-5 inline-flex items-center gap-2">
+              <SparklesIcon size={18} /> Let's talk
+            </NeonButton>
+          </PulseBeams>
+        </div>
 
         <div className="mt-20 grid lg:grid-cols-[1.4fr_1fr] gap-16">
           {sent ? (
