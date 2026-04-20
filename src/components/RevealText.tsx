@@ -1,8 +1,6 @@
 import { useEffect, useRef } from "react";
-import animeImport from "animejs";
+import { animate, stagger } from "animejs";
 import { cn } from "@/lib/utils";
-
-const anime: any = (animeImport as any).default ?? animeImport;
 
 interface Props {
   text: string;
