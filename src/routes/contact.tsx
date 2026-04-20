@@ -133,6 +133,8 @@ function Contact() {
           text="unforgettable."
           as="h1"
           className="font-display text-5xl md:text-9xl font-bold leading-[0.9] block text-gradient-cyan"
+          delay={300}
+        />
 
         {/* Pulse beams Let's talk */}
         <div className="mt-16">
