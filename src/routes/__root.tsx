@@ -1,6 +1,6 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { SiteHeader } from "../components/SiteHeader";
-import { CinematicFooter } from "../components/CinematicFooter";
+import { SiteFooter } from "../components/SiteFooter";
 
 import appCss from "../styles.css?url";
 
@@ -76,7 +76,7 @@ function RootComponent() {
       <main>
         <Outlet />
       </main>
-      <CinematicFooter />
+      <SiteFooter />
     </>
   );
 }
