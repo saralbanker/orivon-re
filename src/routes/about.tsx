@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { RevealText } from "@/components/RevealText";
 import { Marquee } from "@/components/Marquee";
 import { SpotlightCard } from "@/components/SpotlightCard";
+import { AnimatedTestimonials } from "@/components/AnimatedTestimonials";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -37,23 +38,31 @@ const SKILLS = [
 const TEAM = [
   {
     name: "Maya Iro",
-    role: "Founder, ECD",
-    img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&q=80&auto=format&fit=crop",
+    designation: "Founder · Executive Creative Director",
+    quote:
+      "We started Orivon to prove that small studios can outship and outdream the giants. Eight years in, the obsession only grows.",
+    src: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=800&q=80&auto=format&fit=crop",
   },
   {
     name: "Theo Vance",
-    role: "Design Director",
-    img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=600&q=80&auto=format&fit=crop",
+    designation: "Design Director",
+    quote:
+      "Craft is a contract with the user. Every pixel, every easing curve, every word — they all whisper how much you care.",
+    src: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=800&q=80&auto=format&fit=crop",
   },
   {
     name: "Sasha Lin",
-    role: "Tech Director",
-    img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=600&q=80&auto=format&fit=crop",
+    designation: "Tech Director",
+    quote:
+      "Performance is a design feature. The fastest interface always feels the most luxurious — and it's how we win awards.",
+    src: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=800&q=80&auto=format&fit=crop",
   },
   {
     name: "Noor Abadi",
-    role: "Motion Lead",
-    img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=600&q=80&auto=format&fit=crop",
+    designation: "Motion Lead",
+    quote:
+      "Motion is the studio's signature. We chase moments that make people lean in, screenshot, and tell their friends.",
+    src: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&q=80&auto=format&fit=crop",
   },
 ];
 
@@ -107,29 +116,14 @@ function About() {
         </div>
 
         <div className="mt-32">
-          <h2 className="font-display text-4xl md:text-6xl font-bold mb-12">
+          <h2 className="font-display text-4xl md:text-6xl font-bold mb-4">
             <span className="text-gradient">The team.</span>
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {TEAM.map((m, i) => (
-              <motion.div
-                key={m.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
-              >
-                <div className="aspect-[4/5] rounded-2xl overflow-hidden border border-border mb-4">
-                  <img
-                    src={m.img}
-                    alt={m.name}
-                    className="h-full w-full object-cover hover:scale-110 transition-transform duration-700"
-                  />
-                </div>
-                <h3 className="font-display text-xl font-bold">{m.name}</h3>
-                <p className="text-sm text-muted-foreground">{m.role}</p>
-              </motion.div>
-            ))}
+          <p className="text-muted-foreground max-w-2xl mb-8">
+            Seven obsessives, one studio. Hover, click, or just watch.
+          </p>
+          <div className="rounded-3xl border border-border glass overflow-hidden">
+            <AnimatedTestimonials testimonials={TEAM} autoplay />
           </div>
         </div>
 

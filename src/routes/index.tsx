@@ -1,18 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Suspense, lazy, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles, Zap, Layers, MousePointer2 } from "lucide-react";
+import { ArrowRight, Sparkles, Zap, Layers } from "lucide-react";
 import { BackgroundPaths } from "@/components/BackgroundPaths";
-import { SparklesCore } from "@/components/SparklesCore";
 import { RevealText } from "@/components/RevealText";
 import { MagneticButton } from "@/components/MagneticButton";
 import { SpotlightCard } from "@/components/SpotlightCard";
 import { Marquee } from "@/components/Marquee";
+import { NeonButton } from "@/components/ui/neon-button";
 import { PROJECTS } from "@/data/projects";
-
-const Antigravity = lazy(() => import("@/components/Antigravity"));
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -53,23 +51,6 @@ function Index() {
 function Hero() {
   return (
     <section className="relative min-h-screen overflow-hidden flex items-center justify-center pt-32 pb-16">
-      {/* 3D background */}
-      <div className="absolute inset-0">
-        <Suspense fallback={null}>
-          <Antigravity
-            count={350}
-            color="#5EE7FF"
-            magnetRadius={8}
-            ringRadius={6}
-            waveAmplitude={1.2}
-            particleSize={1.4}
-            lerpSpeed={0.06}
-            autoAnimate
-            rotationSpeed={0.05}
-          />
-        </Suspense>
-      </div>
-
       {/* SVG paths layer */}
       <BackgroundPaths />
 
@@ -97,24 +78,11 @@ function Hero() {
           <span className="block text-gradient-cyan">future, today.</span>
         </h1>
 
-        {/* Sparkles under title */}
-        <div className="relative h-24 w-full max-w-2xl mx-auto -mt-2">
-          <SparklesCore
-            background="transparent"
-            minSize={0.5}
-            maxSize={1.4}
-            particleDensity={120}
-            particleColor="#5EE7FF"
-            className="h-full w-full"
-          />
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-full bg-gradient-to-r from-background via-transparent to-background" />
-        </div>
-
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4, duration: 0.8 }}
-          className="mx-auto max-w-xl text-base md:text-lg text-muted-foreground mb-10"
+          className="mx-auto max-w-xl text-base md:text-lg text-muted-foreground mb-10 mt-10"
         >
           Orivon is an independent studio crafting brands, websites and digital products
           for ambitious teams who want to win.
@@ -126,29 +94,16 @@ function Hero() {
           transition={{ delay: 0.6 }}
           className="flex flex-wrap items-center justify-center gap-4"
         >
-          <MagneticButton
-            as={Link}
-            to="/work"
-            className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-7 py-4 font-semibold shadow-glow-cyan"
-          >
-            Explore the work <ArrowRight size={18} />
-          </MagneticButton>
-          <MagneticButton
-            as={Link}
-            to="/contact"
-            className="inline-flex items-center gap-2 rounded-full glass px-7 py-4 font-semibold"
-          >
-            Start a project
-          </MagneticButton>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2, duration: 1 }}
-          className="mt-20 flex items-center justify-center gap-2 text-xs uppercase tracking-[0.3em] text-muted-foreground"
-        >
-          <MousePointer2 size={14} /> Move your cursor
+          <Link to="/work">
+            <NeonButton variant="solid" size="lg">
+              Explore the work <ArrowRight size={18} />
+            </NeonButton>
+          </Link>
+          <Link to="/contact">
+            <NeonButton variant="default" size="lg">
+              Start a project
+            </NeonButton>
+          </Link>
         </motion.div>
       </div>
     </section>
