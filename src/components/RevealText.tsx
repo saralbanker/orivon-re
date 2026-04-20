@@ -16,13 +16,12 @@ export const RevealText = ({ text, className, delay = 0, as: Tag = "h2" }: Props
     const el = ref.current;
     if (!el) return;
     const chars = el.querySelectorAll<HTMLElement>(".reveal-char");
-    anime({
-      targets: chars,
+    animate(chars, {
       translateY: ["110%", "0%"],
       opacity: [0, 1],
       duration: 1100,
-      delay: anime.stagger(28, { start: delay }),
-      easing: "cubicBezier(0.16, 1, 0.3, 1)",
+      delay: stagger(28, { start: delay }),
+      ease: "cubicBezier(0.16, 1, 0.3, 1)",
     });
   }, [text, delay]);
 
