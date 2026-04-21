@@ -6,6 +6,7 @@ import { RevealText } from "@/components/RevealText";
 import { MagneticButton } from "@/components/MagneticButton";
 import { PulseBeams } from "@/components/PulseBeams";
 import { NeonButton } from "@/components/ui/neon-button";
+import { BookingCalendar } from "@/components/ui/booking-calendar";
 
 const beams = [
   {
@@ -123,34 +124,45 @@ function Contact() {
   return (
     <div className="pt-40 pb-32 px-6">
       <div className="mx-auto max-w-6xl">
-        <p className="text-sm uppercase tracking-[0.3em] text-primary mb-4">Contact</p>
-        <RevealText
-          text="Let's make something"
-          as="h1"
-          className="font-display text-5xl md:text-9xl font-bold leading-[0.9] block"
-        />
-        <RevealText
-          text="unforgettable."
-          as="h1"
-          className="font-display text-5xl md:text-9xl font-bold leading-[0.9] block text-gradient-cyan"
-          delay={300}
-        />
+        <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-12 items-start">
+          <div>
+            <p className="text-sm uppercase tracking-[0.3em] text-primary mb-4">Contact</p>
+            <RevealText
+              text="Let's make something"
+              as="h1"
+              className="font-display text-5xl md:text-7xl font-bold leading-[0.9] block"
+            />
+            <RevealText
+              text="unforgettable."
+              as="h1"
+              className="font-display text-5xl md:text-7xl font-bold leading-[0.9] block text-gradient-cyan"
+              delay={300}
+            />
+            <p className="mt-6 text-muted-foreground max-w-md">
+              Tell us about your idea — we reply to every brief within 48 hours.
+            </p>
+          </div>
 
-        {/* Pulse beams Let's talk */}
-        <div className="mt-16">
-          <PulseBeams
-            beams={beams}
-            width={858}
-            height={434}
-            className="w-full"
-            background={
-              <div className="absolute inset-0 bg-aurora opacity-30 pointer-events-none" />
-            }
-          >
-            <NeonButton variant="solid" size="lg" className="rounded-full text-base px-10 py-5 inline-flex items-center gap-2">
-              <SparklesIcon size={18} /> Let's talk
-            </NeonButton>
-          </PulseBeams>
+          {/* Pulse beams Let's talk — RIGHT side */}
+          <div className="hidden lg:flex justify-center items-center min-h-[420px]">
+            <PulseBeams
+              beams={beams}
+              width={600}
+              height={420}
+              className="w-full"
+              background={
+                <div className="absolute inset-0 bg-aurora opacity-30 pointer-events-none" />
+              }
+            >
+              <NeonButton
+                variant="solid"
+                size="lg"
+                className="rounded-full text-base px-10 py-5 inline-flex items-center gap-2"
+              >
+                <SparklesIcon size={18} /> Let's talk
+              </NeonButton>
+            </PulseBeams>
+          </div>
         </div>
 
         <div className="mt-20 grid lg:grid-cols-[1.4fr_1fr] gap-16">
@@ -234,6 +246,7 @@ function Contact() {
           <aside className="space-y-8">
             <Info Icon={Mail} label="Email" value="hello@orivon.studio" />
             <Info Icon={MapPin} label="Studios" value="London · Lisbon" />
+            <BookingCalendar />
             <div className="glass rounded-2xl p-6">
               <h3 className="font-display text-lg font-bold mb-2">Response time</h3>
               <p className="text-sm text-muted-foreground">
