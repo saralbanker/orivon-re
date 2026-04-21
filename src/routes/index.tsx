@@ -10,6 +10,9 @@ import { MagneticButton } from "@/components/MagneticButton";
 import { SpotlightCard } from "@/components/SpotlightCard";
 import { Marquee } from "@/components/Marquee";
 import { NeonButton } from "@/components/ui/neon-button";
+import { HeroOrb } from "@/components/HeroOrb";
+import { AnimatedBadge } from "@/components/ui/animated-badge";
+import VaporizeTextCycle, { Tag } from "@/components/ui/vapour-text-effect";
 import { PROJECTS } from "@/data/projects";
 
 if (typeof window !== "undefined") {
