@@ -33,6 +33,10 @@ export const SiteHeader = () => {
       className={cn(
         "fixed top-0 inset-x-0 z-50 transition-all duration-500",
         scrolled ? "py-3" : "py-6",
+        "backdrop-blur-xl",
+        scrolled
+          ? "bg-background/70 border-b border-border/50"
+          : "bg-background/30 md:bg-transparent",
       )}
     >
       <div className="mx-auto max-w-7xl px-6 flex items-center justify-between">
@@ -86,7 +90,7 @@ export const SiteHeader = () => {
       </div>
 
       {open && (
-        <div className="md:hidden mx-6 mt-3 glass rounded-2xl p-4 flex flex-col gap-1">
+        <div className="md:hidden mx-6 mt-3 rounded-2xl p-4 flex flex-col gap-1 bg-background/95 backdrop-blur-2xl border border-border shadow-xl">
           {NAV.map((item) => (
             <Link
               key={item.to}
@@ -95,7 +99,7 @@ export const SiteHeader = () => {
                 "px-4 py-3 rounded-xl text-base font-medium transition-colors",
                 pathname === item.to
                   ? "bg-primary/15 text-primary"
-                  : "text-muted-foreground hover:bg-muted",
+                  : "text-foreground/80 hover:bg-muted hover:text-foreground",
               )}
             >
               {item.label}
