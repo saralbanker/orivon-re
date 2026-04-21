@@ -53,61 +53,80 @@ function Index() {
 
 function Hero() {
   return (
-    <section className="relative min-h-screen overflow-hidden flex items-center justify-center pt-32 pb-16">
-      {/* SVG paths layer */}
+    <section className="relative min-h-screen overflow-hidden flex items-center pt-32 pb-16">
       <BackgroundPaths />
-
-      {/* Aurora + grid */}
       <div className="absolute inset-0 grid-bg pointer-events-none" />
       <div className="absolute inset-0 bg-aurora pointer-events-none opacity-70" />
       <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background pointer-events-none" />
 
-      <div className="relative z-10 mx-auto max-w-6xl px-6 text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 glass rounded-full px-4 py-1.5 mb-8 text-sm"
-        >
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-75 animate-ping" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
-          </span>
-          Available for new projects · Q3 2025
-        </motion.div>
+      <div className="relative z-10 mx-auto max-w-7xl w-full px-6 grid lg:grid-cols-[1.15fr_0.85fr] gap-12 items-center">
+        {/* LEFT — copy */}
+        <div className="text-center lg:text-left">
+          <div className="flex justify-center lg:justify-start mb-8">
+            <AnimatedBadge text="Available for new projects · Q3 2025" />
+          </div>
 
-        <h1 className="font-display font-bold tracking-tight leading-[0.9] text-[clamp(3rem,12vw,11rem)]">
-          <span className="block text-gradient">We design the</span>
-          <span className="block text-gradient-cyan">future, today.</span>
-        </h1>
+          <h1 className="font-display font-bold tracking-tight leading-[0.9] text-[clamp(2.75rem,8.5vw,7.5rem)]">
+            <span className="block text-gradient">We design the</span>
+            <span className="relative block h-[1.1em] mt-1">
+              <span
+                aria-hidden
+                className="absolute inset-0 flex items-center lg:justify-start justify-center"
+              >
+                <span className="block w-full h-full">
+                  <VaporizeTextCycle
+                    texts={["future, today.", "next decade.", "tomorrow, now.", "what's next."]}
+                    font={{
+                      fontFamily: "Space Grotesk, sans-serif",
+                      fontSize: "clamp(44px, 8.5vw, 120px)",
+                      fontWeight: 700,
+                    }}
+                    color="rgb(103, 232, 249)"
+                    spread={4}
+                    density={6}
+                    animation={{ vaporizeDuration: 1.8, fadeInDuration: 1, waitDuration: 1.2 }}
+                    direction="left-to-right"
+                    alignment="left"
+                    tag={Tag.H1}
+                  />
+                </span>
+              </span>
+            </span>
+          </h1>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.8 }}
-          className="mx-auto max-w-xl text-base md:text-lg text-muted-foreground mb-10 mt-10"
-        >
-          Orivon is an independent studio crafting brands, websites and digital products
-          for ambitious teams who want to win.
-        </motion.p>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+            className="mx-auto lg:mx-0 max-w-xl text-base md:text-lg text-muted-foreground mb-10 mt-8"
+          >
+            Orivon is an independent studio crafting brands, websites and digital products for
+            ambitious teams who want to win.
+          </motion.p>
 
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="flex flex-wrap items-center justify-center gap-4"
-        >
-          <Link to="/work">
-            <NeonButton variant="solid" size="lg">
-              Explore the work <ArrowRight size={18} />
-            </NeonButton>
-          </Link>
-          <Link to="/contact">
-            <NeonButton variant="default" size="lg">
-              Start a project
-            </NeonButton>
-          </Link>
-        </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="flex flex-wrap items-center justify-center lg:justify-start gap-4"
+          >
+            <Link to="/work">
+              <NeonButton variant="solid" size="lg">
+                Explore the work <ArrowRight size={18} />
+              </NeonButton>
+            </Link>
+            <Link to="/contact">
+              <NeonButton variant="default" size="lg">
+                Start a project
+              </NeonButton>
+            </Link>
+          </motion.div>
+        </div>
+
+        {/* RIGHT — 3D orb */}
+        <div className="relative h-[420px] md:h-[520px] lg:h-[600px] w-full">
+          <HeroOrb className="h-full w-full" />
+        </div>
       </div>
     </section>
   );
