@@ -209,7 +209,7 @@ function FeaturedWork() {
               data-fw-card
               className={`group relative block ${i % 2 === 1 ? "md:translate-y-16" : ""}`}
             >
-              <div className="relative overflow-hidden rounded-3xl border border-border aspect-[4/3]">
+              <SpotlightCard className="relative overflow-hidden rounded-3xl aspect-[4/3] !p-0">
                 <img
                   src={p.image}
                   alt={p.title}
@@ -221,7 +221,7 @@ function FeaturedWork() {
                   <span className="glass rounded-full px-3 py-1 text-xs">{p.category}</span>
                   <span className="glass rounded-full px-3 py-1 text-xs">{p.year}</span>
                 </div>
-              </div>
+              </SpotlightCard>
               <div className="flex items-start justify-between mt-5 gap-4">
                 <div>
                   <h3 className="font-display text-2xl font-bold group-hover:text-primary transition-colors">
@@ -294,16 +294,16 @@ function Numbers() {
   ];
   return (
     <section className="py-24 px-6 border-y border-border">
-      <div className="mx-auto max-w-7xl grid grid-cols-2 md:grid-cols-4 gap-8">
+      <div className="mx-auto max-w-7xl grid grid-cols-2 md:grid-cols-4 gap-4">
         {stats.map((s) => (
-          <div key={s.l}>
+          <SpotlightCard key={s.l} className="p-6 md:p-8">
             <div className="font-display text-5xl md:text-7xl font-bold text-gradient-cyan">
               {s.v}
             </div>
             <div className="mt-2 text-sm uppercase tracking-widest text-muted-foreground">
               {s.l}
             </div>
-          </div>
+          </SpotlightCard>
         ))}
       </div>
     </section>
