@@ -66,31 +66,28 @@ function Hero() {
             <AnimatedBadge text="Available for new projects · Q3 2025" />
           </div>
 
-          <h1 className="font-display font-bold tracking-tight leading-[0.9] text-[clamp(2.75rem,8.5vw,7.5rem)]">
+          <h1 className="font-display font-bold tracking-tight leading-[0.95] text-[clamp(2.5rem,7.5vw,6.5rem)]">
             <span className="block text-gradient">We design the</span>
-            <span className="relative block h-[1.1em] mt-1">
-              <span
-                aria-hidden
-                className="absolute inset-0 flex items-center lg:justify-start justify-center"
-              >
-                <span className="block w-full h-full">
-                  <VaporizeTextCycle
-                    texts={["future, today.", "next decade.", "tomorrow, now.", "what's next."]}
-                    font={{
-                      fontFamily: "Space Grotesk, sans-serif",
-                      fontSize: "clamp(44px, 8.5vw, 120px)",
-                      fontWeight: 700,
-                    }}
-                    color="rgb(103, 232, 249)"
-                    spread={4}
-                    density={6}
-                    animation={{ vaporizeDuration: 1.8, fadeInDuration: 1, waitDuration: 1.2 }}
-                    direction="left-to-right"
-                    alignment="left"
-                    tag={Tag.H1}
-                  />
-                </span>
-              </span>
+            <span className="block">
+              <span className="text-gradient">future,</span>{" "}
+              <span className="text-gradient-cyan">today.</span>
+            </span>
+            <span className="relative mt-3 block h-[1em] w-full max-w-[640px] mx-auto lg:mx-0">
+              <VaporizeTextCycle
+                texts={["Brands.", "Websites.", "Products.", "Motion."]}
+                font={{
+                  fontFamily: "Space Grotesk, sans-serif",
+                  fontSize: "clamp(28px, 5vw, 72px)",
+                  fontWeight: 700,
+                }}
+                color="rgb(103, 232, 249)"
+                spread={4}
+                density={6}
+                animation={{ vaporizeDuration: 1.8, fadeInDuration: 1, waitDuration: 1.2 }}
+                direction="left-to-right"
+                alignment="left"
+                tag={Tag.H2}
+              />
             </span>
           </h1>
 

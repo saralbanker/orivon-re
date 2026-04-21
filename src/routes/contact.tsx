@@ -1,11 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Mail, MapPin, Send, Sparkles as SparklesIcon } from "lucide-react";
+import { ArrowRight, Mail, MapPin, Send } from "lucide-react";
 import { RevealText } from "@/components/RevealText";
 import { MagneticButton } from "@/components/MagneticButton";
 import { PulseBeams } from "@/components/PulseBeams";
-import { NeonButton } from "@/components/ui/neon-button";
 import { BookingCalendar } from "@/components/ui/booking-calendar";
 
 const beams = [
@@ -143,7 +142,7 @@ function Contact() {
             </p>
           </div>
 
-          {/* Pulse beams Let's talk — RIGHT side */}
+          {/* Pulse beams (decorative, RIGHT side) */}
           <div className="hidden lg:flex justify-center items-center min-h-[420px]">
             <PulseBeams
               beams={beams}
@@ -154,13 +153,11 @@ function Contact() {
                 <div className="absolute inset-0 bg-aurora opacity-30 pointer-events-none" />
               }
             >
-              <NeonButton
-                variant="solid"
-                size="lg"
-                className="rounded-full text-base px-10 py-5 inline-flex items-center gap-2"
-              >
-                <SparklesIcon size={18} /> Let's talk
-              </NeonButton>
+              <div className="relative h-32 w-32 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center backdrop-blur-md">
+                <span className="absolute inset-0 rounded-full bg-primary/20 blur-2xl" />
+                <span className="relative h-3 w-3 rounded-full bg-primary shadow-glow-cyan animate-ping" />
+                <span className="absolute h-3 w-3 rounded-full bg-primary shadow-glow-cyan" />
+              </div>
             </PulseBeams>
           </div>
         </div>
