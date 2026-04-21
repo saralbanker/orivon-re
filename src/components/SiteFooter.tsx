@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Github, Instagram, Twitter, Dribbble, Mail, MapPin, Phone } from "lucide-react";
 import { AnimatedDock } from "./AnimatedDock";
+import { GooeyText } from "./ui/gooey-text-morphing";
 
 const aboutLinks = [
   { text: "About Studio", to: "/about" },
@@ -107,11 +108,15 @@ export function SiteFooter() {
           </div>
         </div>
 
-        {/* Giant wordmark */}
-        <div className="relative mt-20 select-none overflow-hidden">
-          <div className="text-center font-display font-black tracking-tighter leading-[0.85] text-[clamp(4rem,22vw,16rem)] text-gradient-cyan opacity-80">
-            ORIVON
-          </div>
+        {/* Giant gooey wordmark */}
+        <div className="relative mt-20 select-none overflow-hidden h-[clamp(5rem,22vw,16rem)]">
+          <GooeyText
+            texts={["ORIVON", "STUDIO", "CRAFT", "ORIVON"]}
+            morphTime={1.4}
+            cooldownTime={1.6}
+            className="h-full w-full"
+            textClassName="text-gradient-cyan tracking-tighter leading-none text-[clamp(4rem,22vw,16rem)]"
+          />
         </div>
 
         <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-8 text-sm text-muted-foreground">
