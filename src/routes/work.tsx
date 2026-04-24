@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { PROJECTS } from "@/data/projects";
 import { RevealText } from "@/components/RevealText";
+import { UnicornInline } from "@/components/UnicornBackground";
 
 export const Route = createFileRoute("/work")({
   head: () => ({
@@ -70,7 +71,12 @@ function WorkPage() {
                 params={{ slug: p.slug }}
                 className="group block"
               >
-                <div className="relative overflow-hidden rounded-3xl border border-border aspect-[4/3]">
+                <div className="group/card relative rounded-3xl p-[2px] aspect-[4/3] overflow-hidden">
+                  {/* Animated Unicorn border */}
+                  <div className="absolute inset-0 rounded-3xl overflow-hidden">
+                    <UnicornInline projectId="PmM4LaTfj8EnvIr41EhZ" />
+                  </div>
+                  <div className="relative h-full w-full rounded-[calc(1.5rem-2px)] overflow-hidden border border-border/40">
                   <img
                     src={p.image}
                     alt={p.title}
@@ -84,6 +90,7 @@ function WorkPage() {
                   </div>
                   <div className="absolute bottom-4 right-4 rounded-full glass p-3 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                     <ArrowUpRight size={20} />
+                  </div>
                   </div>
                 </div>
                 <div className="mt-5">
