@@ -2,7 +2,7 @@ import { Outlet, createRootRoute, HeadContent, Scripts } from "@tanstack/react-r
 import { SiteHeader } from "../components/SiteHeader";
 import { SiteFooter } from "../components/SiteFooter";
 import { NotFoundOrivon } from "../components/NotFoundOrivon";
-import { UnicornSiteBackground } from "../components/UnicornBackground";
+import { SiteBackground } from "../components/SiteBackground";
 
 import appCss from "../styles.css?url";
 
@@ -62,7 +62,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   return (
     <>
-      <UnicornSiteBackground />
+      <SiteBackground />
       <SiteHeader />
       <main>
         <Outlet />
