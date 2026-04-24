@@ -204,19 +204,24 @@ function FeaturedWork() {
               data-fw-card
               className={`group relative block ${i % 2 === 1 ? "md:translate-y-16" : ""}`}
             >
-              <SpotlightCard className="relative overflow-hidden rounded-3xl aspect-[4/3] !p-0">
-                <img
-                  src={p.image}
-                  alt={p.title}
-                  loading="lazy"
-                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
-                <div className="absolute top-4 left-4 flex gap-2">
-                  <span className="glass rounded-full px-3 py-1 text-xs">{p.category}</span>
-                  <span className="glass rounded-full px-3 py-1 text-xs">{p.year}</span>
+              <div className="relative rounded-3xl p-[2px] aspect-[4/3] overflow-hidden">
+                <div className="absolute inset-0 rounded-3xl overflow-hidden">
+                  <UnicornInline projectId="PmM4LaTfj8EnvIr41EhZ" />
                 </div>
-              </SpotlightCard>
+                <SpotlightCard className="relative h-full w-full overflow-hidden rounded-[calc(1.5rem-2px)] !p-0">
+                  <img
+                    src={p.image}
+                    alt={p.title}
+                    loading="lazy"
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+                  <div className="absolute top-4 left-4 flex gap-2">
+                    <span className="glass rounded-full px-3 py-1 text-xs">{p.category}</span>
+                    <span className="glass rounded-full px-3 py-1 text-xs">{p.year}</span>
+                  </div>
+                </SpotlightCard>
+              </div>
               <div className="flex items-start justify-between mt-5 gap-4">
                 <div>
                   <h3 className="font-display text-2xl font-bold group-hover:text-primary transition-colors">
