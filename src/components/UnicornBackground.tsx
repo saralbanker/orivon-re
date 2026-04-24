@@ -1,7 +1,7 @@
 "use client";
 
 import UnicornScene from "unicornstudio-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 const SDK_URL =
   "https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@2.1.9/dist/unicornStudio.umd.js";
@@ -51,28 +51,19 @@ export function UnicornInline({
   dpi?: number;
   scale?: number;
 }) {
-  const containerRef = useRef<HTMLDivElement | null>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
-
-  useEffect(() => {
-    const el = containerRef.current;
+  const ref = (el: HTMLDivElement | null) => {
     if (!el) return;
-
     const update = () => {
       const r = el.getBoundingClientRect();
-      const next = { w: Math.round(r.width), h: Math.round(r.height) };
-      setSize((prev) => (prev.w === next.w && prev.h === next.h ? prev : next));
+      setSize({ w: Math.round(r.width), h: Math.round(r.height) });
     };
-
     update();
     const ro = new ResizeObserver(update);
     ro.observe(el);
-
-    return () => ro.disconnect();
-  }, []);
-
+  };
   return (
-    <div ref={containerRef} className={`relative h-full w-full ${className}`}>
+    <div ref={ref} className={`relative w-full h-full ${className}`}>
       {size.w > 0 && size.h > 0 && (
         <UnicornScene
           projectId={projectId}

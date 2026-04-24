@@ -96,16 +96,13 @@ export function SiteFooter() {
             </ul>
             <ul className="mt-6 space-y-3">
               <li className="flex items-center gap-3 text-sm text-muted-foreground">
-                <Mail size={14} className="text-primary" />
-                <span>hello@orivon.studio</span>
+                <Mail size={14} className="text-primary" /> hello@orivon.studio
               </li>
               <li className="flex items-center gap-3 text-sm text-muted-foreground">
-                <Phone size={14} className="text-primary" />
-                <span>+44 20 0000 0000</span>
+                <Phone size={14} className="text-primary" /> +44 20 0000 0000
               </li>
               <li className="flex items-start gap-3 text-sm text-muted-foreground">
-                <MapPin size={14} className="text-primary mt-0.5" />
-                <span>London · Lisbon</span>
+                <MapPin size={14} className="text-primary mt-0.5" /> London · Lisbon
               </li>
             </ul>
           </div>
