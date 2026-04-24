@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { animate, stagger } from "animejs";
+import { animate, cubicBezier, stagger } from "animejs";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -21,7 +21,7 @@ export const RevealText = ({ text, className, delay = 0, as: Tag = "h2" }: Props
       opacity: [0, 1],
       duration: 1100,
       delay: stagger(28, { start: delay }),
-      ease: "cubicBezier(0.16, 1, 0.3, 1)",
+      ease: cubicBezier(0.16, 1, 0.3, 1),
     });
   }, [text, delay]);
 
