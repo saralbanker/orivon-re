@@ -10,7 +10,6 @@ import { MagneticButton } from "@/components/MagneticButton";
 import { SpotlightCard } from "@/components/SpotlightCard";
 import { Marquee } from "@/components/Marquee";
 import { NeonButton } from "@/components/ui/neon-button";
-import { HeroOrb } from "@/components/HeroOrb";
 import { AnimatedBadge } from "@/components/ui/animated-badge";
 import VaporizeTextCycle, { Tag } from "@/components/ui/vapour-text-effect";
 import { PROJECTS } from "@/data/projects";
@@ -59,7 +58,7 @@ function Hero() {
       <div className="absolute inset-0 bg-aurora pointer-events-none opacity-70" />
       <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background pointer-events-none" />
 
-      <div className="relative z-10 mx-auto max-w-7xl w-full px-6 grid lg:grid-cols-[1.15fr_0.85fr] gap-12 items-center">
+      <div className="relative z-10 mx-auto max-w-7xl w-full px-6">
         {/* LEFT — copy */}
         <div className="text-center lg:text-left">
           <div className="flex justify-center lg:justify-start mb-8">
@@ -118,11 +117,6 @@ function Hero() {
               </NeonButton>
             </Link>
           </motion.div>
-        </div>
-
-        {/* RIGHT — 3D orb */}
-        <div className="relative h-[420px] md:h-[520px] lg:h-[600px] w-full">
-          <HeroOrb className="h-full w-full" />
         </div>
       </div>
     </section>
