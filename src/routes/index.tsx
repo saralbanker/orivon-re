@@ -4,15 +4,14 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles, Zap, Layers } from "lucide-react";
-import { BackgroundPaths } from "@/components/BackgroundPaths";
 import { RevealText } from "@/components/RevealText";
 import { MagneticButton } from "@/components/MagneticButton";
 import { SpotlightCard } from "@/components/SpotlightCard";
 import { Marquee } from "@/components/Marquee";
 import { NeonButton } from "@/components/ui/neon-button";
-import { HeroOrb } from "@/components/HeroOrb";
 import { AnimatedBadge } from "@/components/ui/animated-badge";
 import VaporizeTextCycle, { Tag } from "@/components/ui/vapour-text-effect";
+import { UnicornInline } from "@/components/UnicornBackground";
 import { PROJECTS } from "@/data/projects";
 
 if (typeof window !== "undefined") {
@@ -54,30 +53,35 @@ function Index() {
 function Hero() {
   return (
     <section className="relative min-h-screen overflow-hidden flex items-center pt-32 pb-16">
-      <BackgroundPaths />
-      <div className="absolute inset-0 grid-bg pointer-events-none" />
-      <div className="absolute inset-0 bg-aurora pointer-events-none opacity-70" />
-      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background pointer-events-none" />
+      <div className="absolute inset-0 grid-bg pointer-events-none opacity-40" />
+      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background pointer-events-none z-10" />
 
-      <div className="relative z-10 mx-auto max-w-7xl w-full px-6 grid lg:grid-cols-[1.15fr_0.85fr] gap-12 items-center">
-        {/* LEFT — copy */}
-        <div className="text-center lg:text-left">
-          <div className="flex justify-center lg:justify-start mb-8">
+      <div className="relative z-10 mx-auto max-w-7xl w-full px-6">
+        <div className="text-center max-w-5xl mx-auto">
+          <div className="flex justify-center mb-8">
             <AnimatedBadge text="Available for new projects · Q3 2025" />
           </div>
 
-          <h1 className="font-display font-bold tracking-tight leading-[0.95] text-[clamp(2.5rem,7.5vw,6.5rem)]">
-            <span className="block text-gradient">We design the</span>
-            <span className="block">
-              <span className="text-gradient">future,</span>{" "}
-              <span className="text-gradient-cyan">today.</span>
-            </span>
-            <span className="relative mt-3 block h-[1em] w-full max-w-[640px] mx-auto lg:mx-0">
+          {/* Headline with Unicorn Studio scene as background fill */}
+          <div className="relative mx-auto w-full">
+            <div className="absolute inset-0 -inset-x-10 -inset-y-6 pointer-events-none">
+              <UnicornInline projectId="sZqiCmxe5wUb8ySRLPbh" />
+            </div>
+            <h1 className="relative font-display font-bold tracking-tight leading-[0.95] text-[clamp(2.5rem,8.5vw,7.5rem)]">
+              <span className="block text-gradient">We design the</span>
+              <span className="block">
+                <span className="text-gradient">future,</span>{" "}
+                <span className="text-gradient-cyan">today.</span>
+              </span>
+            </h1>
+          </div>
+
+          <div className="relative mt-6 mx-auto h-[1.2em] w-full max-w-[640px]">
               <VaporizeTextCycle
                 texts={["Brands.", "Websites.", "Products.", "Motion."]}
                 font={{
                   fontFamily: "Space Grotesk, sans-serif",
-                  fontSize: "clamp(28px, 5vw, 72px)",
+                fontSize: "clamp(28px, 5vw, 72px)",
                   fontWeight: 700,
                 }}
                 color="rgb(103, 232, 249)"
@@ -85,17 +89,16 @@ function Hero() {
                 density={6}
                 animation={{ vaporizeDuration: 1.8, fadeInDuration: 1, waitDuration: 1.2 }}
                 direction="left-to-right"
-                alignment="left"
+              alignment="center"
                 tag={Tag.H2}
               />
-            </span>
-          </h1>
+          </div>
 
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.8 }}
-            className="mx-auto lg:mx-0 max-w-xl text-base md:text-lg text-muted-foreground mb-10 mt-8"
+            className="mx-auto max-w-xl text-base md:text-lg text-muted-foreground mb-10 mt-8"
           >
             Orivon is an independent studio crafting brands, websites and digital products for
             ambitious teams who want to win.
@@ -105,7 +108,7 @@ function Hero() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6 }}
-            className="flex flex-wrap items-center justify-center lg:justify-start gap-4"
+            className="flex flex-wrap items-center justify-center gap-4"
           >
             <Link to="/work">
               <NeonButton variant="solid" size="lg">
@@ -118,11 +121,6 @@ function Hero() {
               </NeonButton>
             </Link>
           </motion.div>
-        </div>
-
-        {/* RIGHT — 3D orb */}
-        <div className="relative h-[420px] md:h-[520px] lg:h-[600px] w-full">
-          <HeroOrb className="h-full w-full" />
         </div>
       </div>
     </section>
