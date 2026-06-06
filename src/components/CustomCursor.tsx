@@ -74,7 +74,8 @@ export function CustomCursor() {
     };
   }, [isVisible]);
 
-  if (typeof window === "undefined" || (typeof window !== "undefined" && window.innerWidth < 768)) return null;
+  if (typeof window === "undefined" || (typeof window !== "undefined" && window.innerWidth < 768))
+    return null;
 
   return (
     <div

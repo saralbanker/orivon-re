@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type Ref } from "react";
 import { animate, stagger } from "animejs";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +26,7 @@ export const RevealText = ({ text, className, delay = 0, as: Tag = "h2" }: Props
   }, [text, delay]);
 
   return (
-    <Tag ref={ref as any} className={cn("inline-block", className)}>
+    <Tag ref={ref as Ref<never>} className={cn("inline-block", className)}>
       {text.split(" ").map((word, wi) => (
         <span key={wi} className="inline-block overflow-hidden mr-[0.25em] align-bottom">
           {word.split("").map((c, ci) => (

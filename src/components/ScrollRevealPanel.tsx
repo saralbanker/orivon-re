@@ -61,7 +61,7 @@ export function ScrollRevealPanel({ panels }: ScrollRevealPanelProps) {
         const textColor = p.textDark ? "text-black" : "text-white";
         const iconColor = p.textDark ? "text-black/70" : "text-white/70";
         const subTextColor = p.textDark ? "text-black/60" : "text-white/60";
-        
+
         return (
           <div
             key={p.title}
@@ -84,7 +84,9 @@ export function ScrollRevealPanel({ panels }: ScrollRevealPanelProps) {
 
             {/* Core Body */}
             <div className="my-auto py-4">
-              <h3 className={`font-display text-3xl md:text-5xl font-bold leading-none tracking-tight mb-4 ${textColor}`}>
+              <h3
+                className={`font-display text-3xl md:text-5xl font-bold leading-none tracking-tight mb-4 ${textColor}`}
+              >
                 {p.title}
               </h3>
               <p className={`text-base md:text-lg max-w-xl leading-relaxed ${subTextColor}`}>

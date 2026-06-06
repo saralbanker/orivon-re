@@ -108,7 +108,8 @@ function Services() {
         <div className="mt-24 glass rounded-xl p-10 md:p-16 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
           <div>
             <h3 className="font-display text-3xl md:text-4xl font-bold">
-              Got a brief? <span className="text-[var(--brand-pink)]">Let's scope it together.</span>
+              Got a brief?{" "}
+              <span className="text-[var(--brand-pink)]">Let's scope it together.</span>
             </h3>
             <p className="text-muted-foreground mt-3 max-w-md">
               Tell us about the project — we'll come back within 48 hours.

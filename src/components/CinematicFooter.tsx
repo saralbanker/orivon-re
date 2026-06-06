@@ -34,7 +34,12 @@ export const CinematicFooter = () => {
           y: 0,
           opacity: 1,
           ease: "power2.out",
-          scrollTrigger: { trigger: wrap.current, start: "top 80%", end: "bottom bottom", scrub: 1 },
+          scrollTrigger: {
+            trigger: wrap.current,
+            start: "top 80%",
+            end: "bottom bottom",
+            scrub: 1,
+          },
         },
       );
     }, wrap);

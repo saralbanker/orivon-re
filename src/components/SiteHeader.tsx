@@ -83,7 +83,9 @@ export const SiteHeader = () => {
                 data-cursor-text={item.label.toUpperCase()}
                 className={cn(
                   "relative px-4 py-1.5 text-sm font-medium rounded-full transition-colors",
-                  active ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground",
+                  active
+                    ? "text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 {active && (
