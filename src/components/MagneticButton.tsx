@@ -4,20 +4,25 @@ import {
   useRef,
   type ReactNode,
   type ElementType,
-  type HTMLAttributes,
+  type ComponentPropsWithRef,
   type MutableRefObject,
+  type ForwardedRef,
 } from "react";
 import { gsap } from "gsap";
 import { cn } from "@/lib/utils";
 
-type Props = {
-  as?: ElementType;
+type MagneticButtonProps<T extends ElementType = "button"> = {
+  as?: T;
   className?: string;
-  children: ReactNode;
-} & HTMLAttributes<HTMLElement>;
+  children?: ReactNode;
+} & Omit<ComponentPropsWithRef<T>, "as" | "className" | "children">;
 
-export const MagneticButton = forwardRef<HTMLElement, Props>(
-  ({ as: Component = "button", className, children, ...rest }, fwdRef) => {
+const MagneticButtonComponent = forwardRef(
+  <T extends ElementType = "button">(
+    { as, className, children, ...rest }: MagneticButtonProps<T>,
+    fwdRef: ForwardedRef<HTMLElement>,
+  ) => {
+    const Component = as || "button";
     const ref = useRef<HTMLElement | null>(null);
 
     useEffect(() => {
@@ -69,4 +74,11 @@ export const MagneticButton = forwardRef<HTMLElement, Props>(
     );
   },
 );
-MagneticButton.displayName = "MagneticButton";
+
+MagneticButtonComponent.displayName = "MagneticButton";
+
+export const MagneticButton = MagneticButtonComponent as unknown as <
+  T extends ElementType = "button",
+>(
+  props: MagneticButtonProps<T>,
+) => ReactNode;
