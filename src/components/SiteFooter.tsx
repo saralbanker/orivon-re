@@ -115,7 +115,7 @@ export function SiteFooter() {
             morphTime={1.4}
             cooldownTime={1.6}
             className="h-full w-full"
-            textClassName="text-gradient-cyan tracking-tighter leading-none text-[clamp(4rem,22vw,16rem)]"
+            textClassName="text-[var(--brand-pink)] tracking-tighter leading-none text-[clamp(4rem,22vw,16rem)]"
           />
         </div>
 

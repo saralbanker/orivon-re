@@ -57,7 +57,7 @@ export const CinematicFooter = () => {
         <div className="grid lg:grid-cols-[1.4fr_1fr_1fr_1fr] gap-12 py-20">
           <div>
             <h3 className="font-display text-3xl font-bold mb-4">
-              Have a vision worth <span className="text-gradient-cyan">building</span>?
+              Have a vision worth <span className="text-[var(--brand-pink)]">building</span>?
             </h3>
             <p className="text-muted-foreground mb-6 max-w-md">
               We design and build award-winning digital products that move people and grow brands.
@@ -114,7 +114,7 @@ export const CinematicFooter = () => {
 
         <div
           ref={giant}
-          className="text-center font-display font-black leading-[0.8] text-transparent bg-clip-text bg-gradient-to-b from-primary/30 to-transparent select-none"
+          className="text-center font-display font-black leading-[0.8] text-primary/5 select-none"
           style={{ fontSize: "clamp(5rem, 26vw, 26rem)" }}
         >
           ORIVON

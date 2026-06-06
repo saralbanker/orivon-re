@@ -1,6 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Sun, Moon } from "lucide-react";
 import { MagneticButton } from "./MagneticButton";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +17,7 @@ const NAV = [
 export const SiteHeader = () => {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">("light");
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -25,6 +26,29 @@ export const SiteHeader = () => {
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (saved === "dark" || (!saved && prefersDark)) {
+      setTheme("dark");
+      document.documentElement.classList.add("dark");
+    } else {
+      setTheme("light");
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    const target = theme === "light" ? "dark" : "light";
+    setTheme(target);
+    if (target === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    localStorage.setItem("theme", target);
+  };
 
   useEffect(() => setOpen(false), [pathname]);
 
@@ -40,7 +64,7 @@ export const SiteHeader = () => {
       )}
     >
       <div className="mx-auto max-w-7xl px-6 flex items-center justify-between">
-        <Link to="/" className="group flex items-center gap-2">
+        <Link to="/" className="group flex items-center gap-2" data-cursor-text="HOME">
           <span className="relative flex h-9 w-9 items-center justify-center rounded-full bg-primary/15 border border-primary/30">
             <span className="h-2 w-2 rounded-full bg-primary shadow-glow-cyan" />
           </span>
@@ -56,6 +80,7 @@ export const SiteHeader = () => {
               <Link
                 key={item.to}
                 to={item.to}
+                data-cursor-text={item.label.toUpperCase()}
                 className={cn(
                   "relative px-4 py-1.5 text-sm font-medium rounded-full transition-colors",
                   active ? "text-primary-foreground" : "text-muted-foreground hover:text-foreground",
@@ -70,23 +95,41 @@ export const SiteHeader = () => {
           })}
         </nav>
 
-        <div className="hidden md:block">
+        <div className="hidden md:flex items-center gap-4">
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full glass hover:bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+            aria-label="Toggle theme"
+            data-cursor-text={theme === "light" ? "DARK" : "LIGHT"}
+          >
+            {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
+          </button>
           <MagneticButton
             as={Link}
             to="/contact"
+            data-cursor-text="CHAT"
             className="rounded-full bg-foreground text-background px-5 py-2.5 text-sm font-semibold"
           >
             Let's talk →
           </MagneticButton>
         </div>
 
-        <button
-          aria-label="Menu"
-          onClick={() => setOpen((v) => !v)}
-          className="md:hidden glass rounded-full p-2.5"
-        >
-          {open ? <X size={20} /> : <Menu size={20} />}
-        </button>
+        <div className="flex items-center gap-2 md:hidden">
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-full glass hover:bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+            aria-label="Toggle theme"
+          >
+            {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
+          </button>
+          <button
+            aria-label="Menu"
+            onClick={() => setOpen((v) => !v)}
+            className="glass rounded-full p-2.5"
+          >
+            {open ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
       </div>
 
       {open && (

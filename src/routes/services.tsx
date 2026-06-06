@@ -66,7 +66,9 @@ function Services() {
   return (
     <div className="pt-40 pb-32 px-6">
       <div className="mx-auto max-w-7xl">
-        <p className="text-sm uppercase tracking-[0.3em] text-primary mb-4">Services</p>
+        <span className="text-xs text-[var(--brand-pink)] font-mono block mb-4">
+          — Capabilities
+        </span>
         <RevealText
           text="What we do best."
           as="h1"
@@ -87,13 +89,13 @@ function Services() {
               transition={{ duration: 0.5, delay: i * 0.06 }}
             >
               <SpotlightCard className="p-8 h-full">
-                <Icon size={28} className="text-primary mb-6" />
+                <Icon size={28} className="text-[var(--brand-pink)] mb-6" />
                 <h3 className="font-display text-2xl font-bold mb-3">{title}</h3>
                 <p className="text-muted-foreground mb-6">{copy}</p>
                 <ul className="space-y-2 text-sm">
                   {items.map((it) => (
                     <li key={it} className="flex items-center gap-2">
-                      <span className="h-1 w-1 rounded-full bg-primary" />
+                      <span className="h-1 w-1 rounded-full bg-[var(--brand-pink)]" />
                       {it}
                     </li>
                   ))}
@@ -103,10 +105,10 @@ function Services() {
           ))}
         </div>
 
-        <div className="mt-24 glass rounded-3xl p-10 md:p-16 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+        <div className="mt-24 glass rounded-xl p-10 md:p-16 flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
           <div>
             <h3 className="font-display text-3xl md:text-4xl font-bold">
-              Got a brief? <span className="text-gradient-cyan">Let's scope it together.</span>
+              Got a brief? <span className="text-[var(--brand-pink)]">Let's scope it together.</span>
             </h3>
             <p className="text-muted-foreground mt-3 max-w-md">
               Tell us about the project — we'll come back within 48 hours.

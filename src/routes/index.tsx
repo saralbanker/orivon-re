@@ -3,16 +3,17 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles, Zap, Layers } from "lucide-react";
-import { BackgroundPaths } from "@/components/BackgroundPaths";
+import { ArrowRight, Sparkles, Zap, Layers, ShoppingBag } from "lucide-react";
 import { RevealText } from "@/components/RevealText";
 import { MagneticButton } from "@/components/MagneticButton";
 import { SpotlightCard } from "@/components/SpotlightCard";
 import { Marquee } from "@/components/Marquee";
 import { NeonButton } from "@/components/ui/neon-button";
 import { AnimatedBadge } from "@/components/ui/animated-badge";
-import VaporizeTextCycle, { Tag } from "@/components/ui/vapour-text-effect";
+import { ScrollStoryHorizontal } from "@/components/ScrollStoryHorizontal";
+import { ScrollRevealPanel } from "@/components/ScrollRevealPanel";
 import { PROJECTS } from "@/data/projects";
+import { LusionSandbox } from "@/components/LusionSandbox";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -39,11 +40,30 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <div className="relative">
+    <div className="relative bg-background text-foreground transition-colors duration-500 font-sans">
       <Hero />
       <ScrollingTicker />
-      <FeaturedWork />
-      <Capabilities />
+      
+      {/* Horizontal Storytelling Scroll for Selected Work */}
+      <section className="relative">
+        <ScrollStoryHorizontal projects={PROJECTS} />
+      </section>
+
+      {/* Capabilities Vertical Stacking Cards */}
+      <section className="py-32 px-6 bg-background relative z-10">
+        <div className="mx-auto max-w-5xl mb-20" data-cursor-text="SERVICES">
+          <span className="text-xs text-[var(--brand-pink)] font-mono font-medium mb-4 block">
+            — Capabilities
+          </span>
+          <h2 className="font-serif text-4xl md:text-7xl font-normal leading-[1.05] tracking-tighter">
+            Bespoke capabilities <br />
+            <span className="text-muted-foreground font-sans font-bold text-3xl md:text-5xl block mt-3">engineered for digital impact.</span>
+          </h2>
+        </div>
+        <ScrollRevealPanel panels={CAPABILITIES} />
+      </section>
+
+      <StudioManifesto />
       <Numbers />
       <BigCTA />
     </div>
@@ -51,73 +71,75 @@ function Index() {
 }
 
 function Hero() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+
+  useEffect(() => {
+    if (!titleRef.current) return;
+    const ctx = gsap.context(() => {
+      // Subtle scroll fade for hero title
+      gsap.to(titleRef.current, {
+        opacity: 0.2,
+        y: -50,
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: "bottom 90%",
+          end: "bottom 30%",
+          scrub: true,
+        },
+      });
+    }, containerRef);
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="relative min-h-screen overflow-hidden flex items-center pt-32 pb-16">
-      <BackgroundPaths />
-      <div className="absolute inset-0 grid-bg pointer-events-none" />
-      <div className="absolute inset-0 bg-aurora pointer-events-none opacity-70" />
-      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background pointer-events-none" />
+    <section ref={containerRef} className="relative min-h-screen overflow-hidden flex items-center pt-32 pb-24">
+      {/* Interactive Physics Sandbox Backdrop */}
+      <LusionSandbox isHeroBg={true} />
+      
+      <div className="absolute inset-0 grid-bg pointer-events-none opacity-20" />
+      <div className="absolute inset-0 bg-aurora pointer-events-none opacity-20" />
 
-      <div className="relative z-10 mx-auto max-w-7xl w-full px-6">
-        {/* LEFT — copy */}
-        <div className="text-center lg:text-left">
-          <div className="flex justify-center lg:justify-start mb-8">
-            <AnimatedBadge text="Available for new projects · Q3 2025" />
-          </div>
-
-          <h1 className="font-display font-bold tracking-tight leading-[0.95] text-[clamp(2.5rem,7.5vw,6.5rem)]">
-            <span className="block text-gradient">We design the</span>
-            <span className="block">
-              <span className="text-gradient">future,</span>{" "}
-              <span className="text-gradient-cyan">today.</span>
-            </span>
-            <span className="relative mt-3 block h-[1em] w-full max-w-[640px] mx-auto lg:mx-0">
-              <VaporizeTextCycle
-                texts={["Brands.", "Websites.", "Products.", "Motion."]}
-                font={{
-                  fontFamily: "Space Grotesk, sans-serif",
-                  fontSize: "clamp(28px, 5vw, 72px)",
-                  fontWeight: 700,
-                }}
-                color="rgb(103, 232, 249)"
-                spread={4}
-                density={6}
-                animation={{ vaporizeDuration: 1.8, fadeInDuration: 1, waitDuration: 1.2 }}
-                direction="left-to-right"
-                alignment="left"
-                tag={Tag.H2}
-              />
-            </span>
-          </h1>
-
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.8 }}
-            className="mx-auto lg:mx-0 max-w-xl text-base md:text-lg text-muted-foreground mb-10 mt-8"
-          >
-            Orivon is an independent studio crafting brands, websites and digital products for
-            ambitious teams who want to win.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="flex flex-wrap items-center justify-center lg:justify-start gap-4"
-          >
-            <Link to="/work">
-              <NeonButton variant="solid" size="lg">
-                Explore the work <ArrowRight size={18} />
-              </NeonButton>
-            </Link>
-            <Link to="/contact">
-              <NeonButton variant="default" size="lg">
-                Start a project
-              </NeonButton>
-            </Link>
-          </motion.div>
+      <div className="relative z-10 mx-auto max-w-4xl w-full px-6 flex flex-col items-center text-center">
+        <div className="flex justify-center mb-6" data-cursor-text="INFO">
+          <AnimatedBadge text="Crafted by humans · Q3 2026" />
         </div>
+
+        <h1
+          ref={titleRef}
+          className="font-serif font-normal tracking-tighter leading-[0.95] text-[clamp(3.5rem,8vw,7.5rem)] text-foreground text-center"
+        >
+          We design <br />
+          <em className="text-[var(--brand-pink)] italic">storytelling</em> <br />
+          websites.
+        </h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.8 }}
+          className="max-w-2xl text-base md:text-lg text-muted-foreground mt-8 leading-relaxed font-sans font-normal text-center"
+        >
+          Orivon is an independent design studio. We reject template layouts and complex 3D meshes to focus on high-fidelity typography, tactile interfaces, and meaningful storytelling.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="flex flex-wrap justify-center items-center gap-4 mt-10"
+        >
+          <Link to="/work" data-cursor-text="WORK">
+            <NeonButton variant="solid" size="lg">
+              Explore the work <ArrowRight size={18} className="ml-1" />
+            </NeonButton>
+          </Link>
+          <Link to="/contact" data-cursor-text="TALK">
+            <NeonButton variant="default" size="lg">
+              Start a project
+            </NeonButton>
+          </Link>
+        </motion.div>
       </div>
     </section>
   );
@@ -126,19 +148,19 @@ function Hero() {
 function ScrollingTicker() {
   const items = [
     "Awwwards SOTD",
-    "FWA",
+    "FWA Site of the Month",
     "CSS Design Awards",
     "Webby Honoree",
-    "Lovie Gold",
-    "ADC Bronze",
+    "Lovie Gold Winner",
+    "ADC Design Award",
   ];
   return (
-    <section className="border-y border-border py-8 bg-background/50 backdrop-blur-sm">
+    <section className="border-y border-border py-8 bg-background/50 backdrop-blur-sm relative z-10" data-cursor-text="HONORS">
       <Marquee>
         {items.map((it) => (
-          <span key={it} className="flex items-center gap-12 text-2xl font-display font-medium">
+          <span key={it} className="flex items-center gap-12 text-2xl font-serif font-normal">
             <span className="text-foreground/70">{it}</span>
-            <span className="text-primary">✦</span>
+            <span className="text-[var(--brand-pink)] font-sans">✦</span>
           </span>
         ))}
       </Marquee>
@@ -146,135 +168,92 @@ function ScrollingTicker() {
   );
 }
 
-function FeaturedWork() {
-  const ref = useRef<HTMLDivElement>(null);
+function StudioManifesto() {
+  const textRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    if (!ref.current) return;
+    if (!textRef.current) return;
     const ctx = gsap.context(() => {
-      const cards = ref.current!.querySelectorAll<HTMLElement>("[data-fw-card]");
-      cards.forEach((card) => {
+      // Highlight lines of text on scroll
+      const lines = textRef.current!.querySelectorAll("[data-line]");
+      lines.forEach((line) => {
         gsap.fromTo(
-          card,
-          { y: 80, opacity: 0 },
+          line,
+          { opacity: 0.25 },
           {
-            y: 0,
             opacity: 1,
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: { trigger: card, start: "top 85%" },
-          },
+            scrollTrigger: {
+              trigger: line,
+              start: "top 80%",
+              end: "top 45%",
+              scrub: true,
+            },
+          }
         );
       });
-    }, ref);
+    }, textRef);
     return () => ctx.revert();
   }, []);
 
-  const featured = PROJECTS.slice(0, 4);
-
   return (
-    <section ref={ref} className="relative py-32 px-6">
-      <div className="mx-auto max-w-7xl">
-        <div className="flex items-end justify-between mb-16 gap-6 flex-wrap">
-          <div>
-            <p className="text-sm uppercase tracking-[0.3em] text-primary mb-3">Selected work</p>
-            <RevealText
-              text="Recent projects"
-              as="h2"
-              className="font-display text-5xl md:text-7xl font-bold"
-            />
-          </div>
-          <Link
-            to="/work"
-            className="inline-flex items-center gap-2 text-sm font-semibold hover:text-primary transition-colors"
-          >
-            View all <ArrowRight size={16} />
-          </Link>
-        </div>
-
-        <div className="grid md:grid-cols-2 gap-6 md:gap-8">
-          {featured.map((p, i) => (
-            <Link
-              key={p.slug}
-              to="/work/$slug"
-              params={{ slug: p.slug }}
-              data-fw-card
-              className={`group relative block ${i % 2 === 1 ? "md:translate-y-16" : ""}`}
-            >
-              <SpotlightCard className="relative overflow-hidden rounded-3xl aspect-[4/3] !p-0">
-                <img
-                  src={p.image}
-                  alt={p.title}
-                  loading="lazy"
-                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
-                <div className="absolute top-4 left-4 flex gap-2">
-                  <span className="glass rounded-full px-3 py-1 text-xs">{p.category}</span>
-                  <span className="glass rounded-full px-3 py-1 text-xs">{p.year}</span>
-                </div>
-              </SpotlightCard>
-              <div className="flex items-start justify-between mt-5 gap-4">
-                <div>
-                  <h3 className="font-display text-2xl font-bold group-hover:text-primary transition-colors">
-                    {p.title}
-                  </h3>
-                  <p className="text-muted-foreground text-sm mt-1">{p.client}</p>
-                </div>
-                <span className="rounded-full glass p-3 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                  <ArrowRight size={18} />
-                </span>
-              </div>
-            </Link>
-          ))}
+    <section className="py-40 px-6 bg-[var(--muted)] relative z-10 border-y border-border" data-cursor-text="CREED">
+      <div className="mx-auto max-w-4xl text-left" ref={textRef}>
+        <span className="text-xs text-[var(--brand-pink)] font-mono mb-4 block">
+          — Philosophy
+        </span>
+        <div className="font-serif text-3xl md:text-5xl lg:text-6xl font-normal leading-tight tracking-tight space-y-8 text-foreground">
+          <p data-line className="transition-opacity">
+            We believe that templates dilute your brand value.
+          </p>
+          <p data-line className="transition-opacity">
+            An award-winning website is not built with 3D spinners or pre-made UI blocks.
+          </p>
+          <p data-line className="transition-opacity">
+            It is crafted with bespoke typography scales, custom layouts, and animations that adapt to the user’s scroll cadence.
+          </p>
+          <p data-line className="transition-opacity text-[var(--brand-pink)] font-serif italic">
+            Every pixel should feel human-made.
+          </p>
         </div>
       </div>
     </section>
   );
 }
 
-function Capabilities() {
-  const items = [
-    {
-      Icon: Sparkles,
-      title: "Brand identity",
-      copy: "Strategy, naming, visual systems and guidelines that scale.",
-    },
-    {
-      Icon: Layers,
-      title: "Web & product",
-      copy: "Websites, e-commerce and SaaS interfaces engineered for impact.",
-    },
-    {
-      Icon: Zap,
-      title: "Motion & 3D",
-      copy: "Cinematic moments — from micro-interactions to WebGL worlds.",
-    },
-  ];
-
-  return (
-    <section className="relative py-32 px-6">
-      <div className="absolute inset-0 bg-aurora opacity-30 pointer-events-none" />
-      <div className="relative mx-auto max-w-7xl">
-        <div className="max-w-3xl mb-16">
-          <p className="text-sm uppercase tracking-[0.3em] text-primary mb-3">What we do</p>
-          <h2 className="font-display text-5xl md:text-7xl font-bold leading-[0.95]">
-            <span className="text-gradient">A studio for</span>{" "}
-            <span className="text-gradient-cyan">ambitious brands.</span>
-          </h2>
-        </div>
-        <div className="grid md:grid-cols-3 gap-6">
-          {items.map(({ Icon, title, copy }) => (
-            <SpotlightCard key={title} className="p-8 h-full">
-              <Icon className="text-primary mb-6" size={28} />
-              <h3 className="font-display text-2xl font-bold mb-3">{title}</h3>
-              <p className="text-muted-foreground">{copy}</p>
-            </SpotlightCard>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
+const CAPABILITIES = [
+  {
+    n: "01",
+    title: "Brand strategy",
+    copy: "Strategy, positioning, and visual systems that scale across every digital viewport.",
+    Icon: Sparkles,
+    color: "var(--brand-pink)",
+    textDark: false,
+  },
+  {
+    n: "02",
+    title: "Web & product design",
+    copy: "Marketing sites, design systems, and complex product interfaces engineered to perform.",
+    Icon: Layers,
+    color: "var(--brand-teal)",
+    textDark: false,
+  },
+  {
+    n: "03",
+    title: "Motion direction",
+    copy: "Bespoke page transitions, scroll-tied events, and subtle micro-interactions.",
+    Icon: Zap,
+    color: "var(--brand-lavender)",
+    textDark: true,
+  },
+  {
+    n: "04",
+    title: "Headless E-commerce",
+    copy: "Fast-loading online storefronts tailored for conversion and premium design feel.",
+    Icon: ShoppingBag,
+    color: "var(--brand-peach)",
+    textDark: true,
+  },
+];
 
 function Numbers() {
   const stats = [
@@ -284,14 +263,14 @@ function Numbers() {
     { v: "98%", l: "Client retention" },
   ];
   return (
-    <section className="py-24 px-6 border-y border-border">
+    <section className="py-24 px-6 border-b border-border bg-background relative z-10" data-cursor-text="STATS">
       <div className="mx-auto max-w-7xl grid grid-cols-2 md:grid-cols-4 gap-4">
         {stats.map((s) => (
-          <SpotlightCard key={s.l} className="p-6 md:p-8">
-            <div className="font-display text-5xl md:text-7xl font-bold text-gradient-cyan">
+          <SpotlightCard key={s.l} className="p-6 md:p-8 bg-[var(--card)] border border-border">
+            <div className="font-serif text-5xl md:text-7xl font-normal text-[var(--brand-pink)]">
               {s.v}
             </div>
-            <div className="mt-2 text-sm uppercase tracking-widest text-muted-foreground">
+            <div className="mt-2 text-xs text-muted-foreground font-mono font-medium">
               {s.l}
             </div>
           </SpotlightCard>
@@ -302,25 +281,51 @@ function Numbers() {
 }
 
 function BigCTA() {
+  const textRef = useRef<HTMLSpanElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!textRef.current || !containerRef.current) return;
+    const ctx = gsap.context(() => {
+      // Scale up text as user scrolls into the CTA section
+      gsap.fromTo(
+        textRef.current,
+        { scale: 0.85 },
+        {
+          scale: 1.05,
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top bottom",
+            end: "bottom bottom",
+            scrub: true,
+          },
+        }
+      );
+    }, containerRef);
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="relative py-40 px-6 overflow-hidden">
-      <div className="absolute inset-0 bg-aurora opacity-60 pointer-events-none" />
-      <div className="relative mx-auto max-w-5xl text-center">
-        <h2 className="font-display font-bold text-[clamp(2.5rem,9vw,7rem)] leading-[0.95]">
-          <span className="text-gradient">Let's build</span>{" "}
-          <span className="text-gradient-cyan">something legendary.</span>
+    <section ref={containerRef} className="relative py-48 px-6 overflow-hidden bg-background border-b border-border">
+      <div className="absolute inset-0 bg-aurora opacity-30 pointer-events-none" />
+      <div className="relative mx-auto max-w-5xl text-center flex flex-col items-center">
+        <h2 className="font-serif font-normal leading-[0.95] text-[clamp(3rem,8vw,7rem)] tracking-tighter">
+          <span ref={textRef} className="block text-[var(--brand-pink)] origin-center transition-transform">
+            Let's build <br />
+            <em className="font-serif italic text-foreground">something legendary.</em>
+          </span>
         </h2>
-        <p className="mt-8 text-muted-foreground text-lg max-w-xl mx-auto">
-          We take on a small number of partners each quarter. If you have an idea worth doing right,
-          we'd love to hear it.
+        <p className="mt-8 text-muted-foreground text-base md:text-lg max-w-xl mx-auto leading-relaxed font-sans">
+          We take on a small number of partners each quarter. If you have an idea worth doing right, we'd love to hear it.
         </p>
         <div className="mt-12">
           <MagneticButton
             as={Link}
             to="/contact"
-            className="inline-flex items-center gap-3 rounded-full bg-primary text-primary-foreground px-9 py-5 text-lg font-semibold shadow-glow-cyan"
+            data-cursor-text="TALK"
+            className="inline-flex items-center gap-3 rounded-full bg-primary text-primary-foreground px-8 py-4.5 text-base font-semibold shadow-glow-cyan"
           >
-            Start a project <ArrowRight size={20} />
+            Start a project <ArrowRight size={18} />
           </MagneticButton>
         </div>
       </div>

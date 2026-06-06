@@ -28,88 +28,147 @@ const STEPS = [
     n: "01",
     title: "Discover",
     copy: "We start every engagement with research — stakeholder interviews, market analysis and a deep look at what's working and what's not.",
+    color: "var(--brand-pink)",
   },
   {
     n: "02",
     title: "Define",
     copy: "We turn insight into a sharp brief: positioning, principles, scope and success metrics. Everyone aligns before a pixel moves.",
+    color: "var(--brand-teal)",
   },
   {
     n: "03",
     title: "Design",
-    copy: "From mood to motion to system — we explore widely, then commit. You see real work in week one, not lorem ipsum mocks.",
+    copy: "From mood to layout to design system — we explore widely, then commit. You see real work in week one, not lorem ipsum mocks.",
+    color: "var(--brand-lavender)",
   },
   {
     n: "04",
     title: "Build",
-    copy: "Engineering and design ship together. We use modern tooling — TanStack, R3F, GSAP — and write code we'd want to maintain.",
+    copy: "Engineering and design ship together. We use modern, clean tools — TanStack, GSAP, Tailwind CSS — writing maintainable code.",
+    color: "var(--brand-peach)",
   },
   {
     n: "05",
     title: "Ship",
-    copy: "QA across devices, performance budgets, accessibility audits — then we launch with confidence (and a back-up plan).",
+    copy: "QA across devices, performance budgets, accessibility audits — then we launch with confidence and clear rollback strategies.",
+    color: "var(--brand-ochre)",
   },
   {
     n: "06",
     title: "Grow",
-    copy: "Post-launch we keep iterating. Analytics, A/B tests and quarterly retainers to compound the gains.",
+    copy: "Post-launch we keep iterating. Analytics, usability testing, and conversion audits to compound the digital gains.",
+    color: "var(--brand-coral)",
   },
 ];
 
 function Process() {
-  const wrap = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const progressLineRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!wrap.current) return;
+    if (!containerRef.current || !progressLineRef.current) return;
+    
     const ctx = gsap.context(() => {
-      const steps = wrap.current!.querySelectorAll<HTMLElement>("[data-step]");
-      steps.forEach((step) => {
-        gsap.fromTo(
-          step,
-          { x: -60, opacity: 0 },
-          {
-            x: 0,
-            opacity: 1,
-            duration: 0.9,
-            ease: "power3.out",
-            scrollTrigger: { trigger: step, start: "top 80%" },
+      // 1. Progress line drawing itself on scroll
+      gsap.fromTo(
+        progressLineRef.current,
+        { scaleY: 0 },
+        {
+          scaleY: 1,
+          ease: "none",
+          transformOrigin: "top center",
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: "top 40%",
+            end: "bottom 80%",
+            scrub: true,
+            invalidateOnRefresh: true,
           },
-        );
+        }
+      );
+
+      // 2. Animate step contents and highlight active steps on scroll
+      const steps = containerRef.current!.querySelectorAll("[data-step-node]");
+      steps.forEach((step) => {
+        const circle = step.querySelector("[data-step-circle]");
+        const text = step.querySelector("[data-step-text]");
+        
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: step,
+            start: "top 75%",
+            end: "top 35%",
+            scrub: true,
+          }
+        });
+
+        tl.fromTo(circle, { scale: 0.8, opacity: 0.4 }, { scale: 1.1, opacity: 1, duration: 0.5 })
+          .fromTo(text, { opacity: 0.3, y: 15 }, { opacity: 1, y: 0, duration: 0.5 }, "-=0.3");
       });
-    }, wrap);
+
+    }, containerRef);
+    
     return () => ctx.revert();
   }, []);
 
   return (
-    <div className="pt-40 pb-32 px-6">
+    <div className="pt-40 pb-32 px-6 bg-background text-foreground transition-colors duration-500">
       <div className="mx-auto max-w-5xl">
-        <p className="text-sm uppercase tracking-[0.3em] text-primary mb-4">Process</p>
+        <span className="text-xs text-[var(--brand-pink)] font-mono block mb-4">
+          — Methodology
+        </span>
         <RevealText
           text="How we work."
           as="h1"
           className="font-display text-6xl md:text-9xl font-bold leading-[0.9]"
         />
         <p className="mt-8 max-w-xl text-lg text-muted-foreground">
-          A simple, repeatable framework that makes ambitious work feel calm.
+          A clean, repeatable framework that makes ambitious, human-made digital projects feel calm.
         </p>
 
-        <div ref={wrap} className="mt-24 relative">
-          <div className="absolute left-6 md:left-12 top-0 bottom-0 w-px bg-gradient-to-b from-primary/60 via-border to-transparent" />
-          {STEPS.map((s) => (
+        {/* Steps container */}
+        <div ref={containerRef} className="mt-32 relative">
+          
+          {/* Base timeline rail */}
+          <div className="absolute left-6 md:left-12 top-6 bottom-6 w-[1px] bg-border" />
+          
+          {/* Animated active progress line */}
+          <div 
+            ref={progressLineRef} 
+            className="absolute left-6 md:left-12 top-6 bottom-6 w-[1px] bg-[var(--brand-pink)]" 
+            style={{ transformOrigin: "top center", scaleY: 0 }}
+          />
+
+          {STEPS.map((s, idx) => (
             <div
               key={s.n}
-              data-step
-              className="relative pl-20 md:pl-32 pb-20 last:pb-0"
+              data-step-node
+              className="relative pl-20 md:pl-32 pb-24 last:pb-0"
             >
-              <div className="absolute left-0 top-0 flex items-center justify-center h-12 w-12 md:h-24 md:w-24 rounded-full glass border-primary/30">
-                <span className="font-display text-lg md:text-3xl font-bold text-primary">
+              {/* Step indicator circle */}
+              <div 
+                data-step-circle
+                className="absolute left-0 top-0 flex items-center justify-center h-12 w-12 md:h-24 md:w-24 rounded-xl bg-[var(--card)] border border-border/80 transition-all duration-300 z-10"
+                style={{ borderColor: s.color }}
+              >
+                <span className="font-display text-lg md:text-3xl font-bold font-mono" style={{ color: s.color }}>
                   {s.n}
                 </span>
               </div>
-              <h2 className="font-display text-4xl md:text-6xl font-bold leading-tight">
-                <span className="text-gradient-cyan">{s.title}</span>
-              </h2>
-              <p className="mt-4 text-lg text-muted-foreground max-w-2xl">{s.copy}</p>
+
+              {/* Step description content */}
+              <div data-step-text className="opacity-40 transition-all duration-500">
+                <span className="text-xs text-[var(--brand-pink)] font-mono block mb-1">
+                  Phase 0{idx + 1}
+                </span>
+                <h2 className="font-display text-3xl md:text-5xl font-bold leading-tight mb-4 text-foreground">
+                  {s.title}
+                </h2>
+                <p className="text-base md:text-lg text-muted-foreground max-w-2xl leading-relaxed">
+                  {s.copy}
+                </p>
+              </div>
             </div>
           ))}
         </div>

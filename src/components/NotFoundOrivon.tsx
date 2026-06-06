@@ -40,7 +40,7 @@ export function NotFoundOrivon() {
         if (s.y < 0) s.y = canvas.height;
         if (s.y > canvas.height) s.y = 0;
         ctx.beginPath();
-        ctx.fillStyle = `rgba(34, 211, 238, ${s.a})`;
+        ctx.fillStyle = `rgba(224, 83, 125, ${s.a})`;
         ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
         ctx.fill();
       });
@@ -72,7 +72,7 @@ export function NotFoundOrivon() {
           initial={{ opacity: 0, scale: 0.8, filter: "blur(20px)" }}
           animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className="font-display font-bold leading-none text-[clamp(7rem,22vw,18rem)] text-gradient-cyan"
+          className="font-display font-bold leading-none text-[clamp(7rem,22vw,18rem)] text-[var(--brand-pink)]"
         >
           404
         </motion.h1>

@@ -30,3 +30,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Sub-repositories and untracked tools
+.agents/
+ar-episode1/
+awesome-design-md/
+awesome-frontend-skills/
+frontend-slides/
+winter-box/
+

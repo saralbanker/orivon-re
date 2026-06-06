@@ -6,6 +6,7 @@ import { RevealText } from "@/components/RevealText";
 import { MagneticButton } from "@/components/MagneticButton";
 import { PulseBeams } from "@/components/PulseBeams";
 import { BookingCalendar } from "@/components/ui/booking-calendar";
+import { cn } from "@/lib/utils";
 
 const beams = [
   {
@@ -111,6 +112,7 @@ const SERVICES = ["Brand", "Web", "Product", "Motion / 3D", "E-commerce"];
 function Contact() {
   const [sent, setSent] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
+  const [budget, setBudget] = useState<string>("");
 
   const toggle = (s: string) =>
     setSelected((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]));
@@ -125,7 +127,7 @@ function Contact() {
       <div className="mx-auto max-w-6xl">
         <div className="grid lg:grid-cols-[1.1fr_0.9fr] gap-12 items-start">
           <div>
-            <p className="text-sm uppercase tracking-[0.3em] text-primary mb-4">Contact</p>
+            <span className="text-xs text-[var(--brand-pink)] font-mono block mb-4">— Inquiries</span>
             <RevealText
               text="Let's make something"
               as="h1"
@@ -134,7 +136,7 @@ function Contact() {
             <RevealText
               text="unforgettable."
               as="h1"
-              className="font-display text-5xl md:text-7xl font-bold leading-[0.9] block text-gradient-cyan"
+              className="font-display text-5xl md:text-7xl font-bold leading-[0.9] block text-[var(--brand-pink)]"
               delay={300}
             />
             <p className="mt-6 text-muted-foreground max-w-md">
@@ -208,15 +210,30 @@ function Contact() {
               <div>
                 <Label>Budget</Label>
                 <div className="flex flex-wrap gap-2">
-                  {BUDGETS.map((b) => (
-                    <label
-                      key={b}
-                      className="rounded-full px-4 py-2 text-sm border border-border glass hover:border-primary/40 transition-colors cursor-pointer has-checked:bg-primary has-checked:text-primary-foreground has-checked:border-primary"
-                    >
-                      <input type="radio" name="budget" value={b} className="sr-only" />
-                      {b}
-                    </label>
-                  ))}
+                  {BUDGETS.map((b) => {
+                    const active = budget === b;
+                    return (
+                      <label
+                        key={b}
+                        className={cn(
+                          "rounded-full px-4 py-2 text-sm border transition-all cursor-pointer",
+                          active
+                            ? "bg-primary text-primary-foreground border-primary shadow-glow-cyan font-semibold"
+                            : "border-border glass hover:border-primary/40 text-foreground"
+                        )}
+                      >
+                        <input
+                          type="radio"
+                          name="budget"
+                          value={b}
+                          checked={active}
+                          onChange={() => setBudget(b)}
+                          className="sr-only"
+                        />
+                        {b}
+                      </label>
+                    );
+                  })}
                 </div>
               </div>
 

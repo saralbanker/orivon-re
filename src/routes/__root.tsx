@@ -3,6 +3,7 @@ import { SiteHeader } from "../components/SiteHeader";
 import { SiteFooter } from "../components/SiteFooter";
 import { NotFoundOrivon } from "../components/NotFoundOrivon";
 import { SiteBackground } from "../components/SiteBackground";
+import { CustomCursor } from "../components/CustomCursor";
 
 import appCss from "../styles.css?url";
 
@@ -62,6 +63,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   return (
     <>
+      <CustomCursor />
       <SiteBackground />
       <SiteHeader />
       <main>
