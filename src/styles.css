@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Cabinet+Grotesk:wght@400;500;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -218,35 +217,55 @@
     }
   }
 
-  .custom-cursor {
+  .custom-cursor-dot {
     position: fixed;
     top: 0;
     left: 0;
-    width: 20px;
-    height: 20px;
-    background-color: #ffffff;
+    width: 6px;
+    height: 6px;
+    background-color: var(--brand-pink);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10000;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease-out, width 0.2s, height 0.2s, background-color 0.2s;
+  }
+
+  .custom-cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 36px;
+    height: 36px;
+    border: 1.5px solid var(--color-foreground);
     border-radius: 50%;
     pointer-events: none;
     z-index: 9999;
     transform: translate(-50%, -50%);
     mix-blend-mode: difference;
-    transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: width 0.3s cubic-bezier(0.215, 0.61, 0.355, 1), 
+                height 0.3s cubic-bezier(0.215, 0.61, 0.355, 1), 
+                border-color 0.3s, 
+                background-color 0.3s;
   }
 
-  .custom-cursor.hover-active {
-    width: 72px;
-    height: 72px;
+  .custom-cursor-ring.hover-active {
+    width: 80px;
+    height: 80px;
+    border-color: transparent;
+    background-color: oklch(1 0 0 / 0.95);
+    mix-blend-mode: normal;
   }
 
   .custom-cursor-text {
     font-family: var(--font-mono);
-    font-size: 9px;
+    font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.15em;
-    color: #000000;
+    color: #0c0d10;
     opacity: 0;
     transform: scale(0.6);
-    transition: opacity 0.2s, transform 0.2s;
+    transition: opacity 0.2s ease, transform 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -254,8 +273,9 @@
     text-transform: uppercase;
   }
 
-  .custom-cursor.hover-active .custom-cursor-text {
+  .custom-cursor-ring.hover-active .custom-cursor-text {
     opacity: 1;
     transform: scale(1);
   }
 }
+

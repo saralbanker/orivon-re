@@ -6,17 +6,6 @@ import { PROJECTS } from "@/data/projects";
 import { RevealText } from "@/components/RevealText";
 
 export const Route = createFileRoute("/work")({
-  head: () => ({
-    meta: [
-      { title: "Work — Orivon Studio" },
-      {
-        name: "description",
-        content: "Selected projects from Orivon — brands, websites and digital products we've shipped.",
-      },
-      { property: "og:title", content: "Work — Orivon Studio" },
-      { property: "og:description", content: "A selection of award-winning client projects." },
-    ],
-  }),
   component: WorkPage,
 });
 

@@ -92,17 +92,6 @@ const beams = [
 ];
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: [
-      { title: "Contact — Orivon Studio" },
-      {
-        name: "description",
-        content: "Tell us about your project. We respond within 48 hours.",
-      },
-      { property: "og:title", content: "Contact — Orivon Studio" },
-      { property: "og:description", content: "Start a project with Orivon Studio." },
-    ],
-  }),
   component: Contact,
 });
 

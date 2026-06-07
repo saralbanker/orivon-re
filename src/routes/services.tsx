@@ -5,21 +5,6 @@ import { SpotlightCard } from "@/components/SpotlightCard";
 import { RevealText } from "@/components/RevealText";
 
 export const Route = createFileRoute("/services")({
-  head: () => ({
-    meta: [
-      { title: "Services — Orivon Studio" },
-      {
-        name: "description",
-        content:
-          "Brand, web, product, motion and e-commerce — six core services from Orivon, an independent design studio.",
-      },
-      { property: "og:title", content: "Services — Orivon Studio" },
-      {
-        property: "og:description",
-        content: "What Orivon does best — brand systems, websites, product design and motion.",
-      },
-    ],
-  }),
   component: Services,
 });
 

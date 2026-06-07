@@ -3,13 +3,6 @@ import { useState } from "react";
 import { SignInCard } from "@/components/ui/sign-in-card";
 
 export const Route = createFileRoute("/login")({
-  head: () => ({
-    meta: [
-      { title: "Sign in — Orivon Studio" },
-      { name: "description", content: "Sign in to the Orivon Studio dashboard." },
-      { property: "og:title", content: "Sign in — Orivon Studio" },
-    ],
-  }),
   component: LoginPage,
 });
 

@@ -9,17 +9,6 @@ if (typeof window !== "undefined") {
 }
 
 export const Route = createFileRoute("/process")({
-  head: () => ({
-    meta: [
-      { title: "Process — Orivon Studio" },
-      {
-        name: "description",
-        content: "Our six-step process: discover, define, design, build, ship and grow.",
-      },
-      { property: "og:title", content: "Process — Orivon Studio" },
-      { property: "og:description", content: "How Orivon turns ambitious briefs into shipped work." },
-    ],
-  }),
   component: Process,
 });
 

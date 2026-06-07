@@ -7,17 +7,6 @@ import { RevealText } from "@/components/RevealText";
 import { NeonButton } from "@/components/ui/neon-button";
 
 export const Route = createFileRoute("/pricing")({
-  head: () => ({
-    meta: [
-      { title: "Pricing — Orivon Studio" },
-      {
-        name: "description",
-        content: "Transparent engagement models for brand, web and product partnerships.",
-      },
-      { property: "og:title", content: "Pricing — Orivon Studio" },
-      { property: "og:description", content: "Engagement models built for ambitious teams." },
-    ],
-  }),
   component: PricingPage,
 });
 

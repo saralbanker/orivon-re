@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "framer-motion";
@@ -14,27 +14,13 @@ import { ScrollStoryHorizontal } from "@/components/ScrollStoryHorizontal";
 import { ScrollRevealPanel } from "@/components/ScrollRevealPanel";
 import { PROJECTS } from "@/data/projects";
 import { LusionSandbox } from "@/components/LusionSandbox";
+import { MorphingBlob } from "@/components/canvas/MorphingBlob";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Orivon — Award-winning digital design studio" },
-      {
-        name: "description",
-        content:
-          "Independent design studio building immersive websites, brand systems and digital products that win awards.",
-      },
-      { property: "og:title", content: "Orivon — Award-winning digital design studio" },
-      {
-        property: "og:description",
-        content: "Brand. Web. Motion. Crafted with obsessive detail.",
-      },
-    ],
-  }),
   component: Index,
 });
 
@@ -96,6 +82,9 @@ function Hero() {
     <section ref={containerRef} className="relative min-h-screen overflow-hidden flex items-center pt-32 pb-24">
       {/* Interactive Physics Sandbox Backdrop */}
       <LusionSandbox isHeroBg={true} />
+      
+      {/* Morphing 3D WebGL shape background */}
+      <MorphingBlob />
       
       <div className="absolute inset-0 grid-bg pointer-events-none opacity-20" />
       <div className="absolute inset-0 bg-aurora pointer-events-none opacity-20" />
@@ -168,25 +157,50 @@ function ScrollingTicker() {
   );
 }
 
+interface ScrollWordParagraphProps {
+  text: string;
+  className?: string;
+}
+
+function ScrollWordParagraph({ text, className = "" }: ScrollWordParagraphProps) {
+  const words = text.split(" ");
+  return (
+    <p data-split-words className={`${className} leading-tight`}>
+      {words.map((word, i) => (
+        <span key={i} className="manifesto-word inline-block mr-[0.25em] transition-colors duration-150">
+          {word}
+        </span>
+      ))}
+    </p>
+  );
+}
+
 function StudioManifesto() {
   const textRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!textRef.current) return;
     const ctx = gsap.context(() => {
-      // Highlight lines of text on scroll
-      const lines = textRef.current!.querySelectorAll("[data-line]");
-      lines.forEach((line) => {
+      const paragraphs = textRef.current!.querySelectorAll("[data-split-words]");
+      paragraphs.forEach((p) => {
+        const words = p.querySelectorAll(".manifesto-word");
+        
+        // Highlight words staggered on scroll
         gsap.fromTo(
-          line,
-          { opacity: 0.25 },
+          words,
+          { 
+            opacity: 0.15,
+          },
           {
             opacity: 1,
+            stagger: 0.1,
+            ease: "none",
             scrollTrigger: {
-              trigger: line,
-              start: "top 80%",
-              end: "top 45%",
-              scrub: true,
+              trigger: p,
+              start: "top 85%",
+              end: "bottom 55%",
+              scrub: 1.2,
+              invalidateOnRefresh: true,
             },
           }
         );
@@ -198,22 +212,14 @@ function StudioManifesto() {
   return (
     <section className="py-40 px-6 bg-[var(--muted)] relative z-10 border-y border-border" data-cursor-text="CREED">
       <div className="mx-auto max-w-4xl text-left" ref={textRef}>
-        <span className="text-xs text-[var(--brand-pink)] font-mono mb-4 block">
+        <span className="text-xs text-[var(--brand-pink)] font-mono mb-6 block">
           — Philosophy
         </span>
-        <div className="font-serif text-3xl md:text-5xl lg:text-6xl font-normal leading-tight tracking-tight space-y-8 text-foreground">
-          <p data-line className="transition-opacity">
-            We believe that templates dilute your brand value.
-          </p>
-          <p data-line className="transition-opacity">
-            An award-winning website is not built with 3D spinners or pre-made UI blocks.
-          </p>
-          <p data-line className="transition-opacity">
-            It is crafted with bespoke typography scales, custom layouts, and animations that adapt to the user’s scroll cadence.
-          </p>
-          <p data-line className="transition-opacity text-[var(--brand-pink)] font-serif italic">
-            Every pixel should feel human-made.
-          </p>
+        <div className="font-serif text-3xl md:text-5xl lg:text-6xl font-normal leading-relaxed space-y-8 text-foreground">
+          <ScrollWordParagraph text="We believe that templates dilute your brand value." />
+          <ScrollWordParagraph text="An award-winning website is not built with 3D spinners or pre-made UI blocks." />
+          <ScrollWordParagraph text="It is crafted with bespoke typography scales, custom layouts, and animations that adapt to the user’s scroll cadence." />
+          <ScrollWordParagraph text="Every pixel should feel human-made." className="text-[var(--brand-pink)] font-serif italic font-medium" />
         </div>
       </div>
     </section>
@@ -255,6 +261,49 @@ const CAPABILITIES = [
   },
 ];
 
+interface StatCounterProps {
+  value: string;
+}
+
+function StatCounter({ value }: StatCounterProps) {
+  const [displayValue, setDisplayValue] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const numericPart = parseInt(value.replace(/[^0-9]/g, ""), 10) || 0;
+  const suffix = value.replace(/[0-9]/g, "");
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const ctx = gsap.context(() => {
+      const obj = { val: 0 };
+      gsap.to(obj, {
+        val: numericPart,
+        duration: 1.8,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: el,
+          start: "top 90%",
+          toggleActions: "play none none none",
+        },
+        onUpdate: () => {
+          setDisplayValue(Math.floor(obj.val));
+        },
+      });
+    }, el);
+
+    return () => ctx.revert();
+  }, [numericPart]);
+
+  return (
+    <span ref={containerRef}>
+      {displayValue}
+      {suffix}
+    </span>
+  );
+}
+
 function Numbers() {
   const stats = [
     { v: "12+", l: "Years of craft" },
@@ -268,7 +317,7 @@ function Numbers() {
         {stats.map((s) => (
           <SpotlightCard key={s.l} className="p-6 md:p-8 bg-[var(--card)] border border-border">
             <div className="font-serif text-5xl md:text-7xl font-normal text-[var(--brand-pink)]">
-              {s.v}
+              <StatCounter value={s.v} />
             </div>
             <div className="mt-2 text-xs text-muted-foreground font-mono font-medium">
               {s.l}
@@ -277,6 +326,52 @@ function Numbers() {
         ))}
       </div>
     </section>
+  );
+}
+
+interface KineticTextProps {
+  text: string;
+}
+
+function KineticText({ text }: KineticTextProps) {
+  const onLetterHover = (e: React.MouseEvent<HTMLSpanElement>) => {
+    const el = e.currentTarget;
+    gsap.to(el, {
+      x: (Math.random() - 0.5) * 25,
+      y: (Math.random() - 0.5) * 25,
+      rotation: (Math.random() - 0.5) * 40,
+      color: "var(--brand-teal)",
+      duration: 0.35,
+      ease: "power2.out",
+    });
+  };
+
+  const onLetterLeave = (e: React.MouseEvent<HTMLSpanElement>) => {
+    const el = e.currentTarget;
+    gsap.to(el, {
+      x: 0,
+      y: 0,
+      rotation: 0,
+      color: "inherit",
+      duration: 0.8,
+      ease: "elastic.out(1.1, 0.4)",
+    });
+  };
+
+  return (
+    <span className="inline-block">
+      {text.split("").map((char, i) => (
+        <span
+          key={i}
+          className="inline-block cursor-default select-none transition-colors duration-150"
+          style={{ display: char === " " ? "inline" : "inline-block" }}
+          onMouseEnter={onLetterHover}
+          onMouseLeave={onLetterLeave}
+        >
+          {char === " " ? "\u00A0" : char}
+        </span>
+      ))}
+    </span>
   );
 }
 
@@ -311,8 +406,10 @@ function BigCTA() {
       <div className="relative mx-auto max-w-5xl text-center flex flex-col items-center">
         <h2 className="font-serif font-normal leading-[0.95] text-[clamp(3rem,8vw,7rem)] tracking-tighter">
           <span ref={textRef} className="block text-[var(--brand-pink)] origin-center transition-transform">
-            Let's build <br />
-            <em className="font-serif italic text-foreground">something legendary.</em>
+            <KineticText text="Let's build" /> <br />
+            <em className="font-serif italic text-foreground">
+              <KineticText text="something legendary." />
+            </em>
           </span>
         </h2>
         <p className="mt-8 text-muted-foreground text-base md:text-lg max-w-xl mx-auto leading-relaxed font-sans">

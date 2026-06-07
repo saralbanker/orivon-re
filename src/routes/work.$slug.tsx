@@ -9,16 +9,6 @@ export const Route = createFileRoute("/work/$slug")({
     if (!project) throw notFound();
     return project;
   },
-  head: ({ loaderData }) => ({
-    meta: loaderData
-      ? [
-          { title: `${loaderData.client} — Orivon Case Study` },
-          { name: "description", content: loaderData.description },
-          { property: "og:title", content: `${loaderData.client} — Orivon` },
-          { property: "og:description", content: loaderData.description },
-        ]
-      : [{ title: "Project — Orivon" }],
-  }),
   notFoundComponent: () => (
     <div className="min-h-screen pt-40 px-6 text-center bg-background">
       <h1 className="font-display text-5xl font-bold">Project not found</h1>

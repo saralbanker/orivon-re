@@ -1,9 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowUpRight } from "lucide-react";
 import { Project } from "@/data/projects";
+import { SpotlightCard } from "./SpotlightCard";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -16,6 +17,8 @@ interface ScrollStoryHorizontalProps {
 export function ScrollStoryHorizontal({ projects }: ScrollStoryHorizontalProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const bleedRef = useRef<HTMLDivElement>(null);
+  const [counter, setCounter] = useState("");
 
   useEffect(() => {
     const container = containerRef.current;
@@ -25,7 +28,8 @@ export function ScrollStoryHorizontal({ projects }: ScrollStoryHorizontalProps) 
     const scrollAmount = scrollSection.scrollWidth - window.innerWidth;
 
     const ctx = gsap.context(() => {
-      gsap.to(scrollSection, {
+      // 1. Horizontal Scroll Animation
+      const horizontalTween = gsap.to(scrollSection, {
         x: -scrollAmount,
         ease: "none",
         scrollTrigger: {
@@ -37,32 +41,137 @@ export function ScrollStoryHorizontal({ projects }: ScrollStoryHorizontalProps) 
           invalidateOnRefresh: true,
         },
       });
+
+      // 2. Card Skew based on Scroll Velocity
+      let skewProxy = { skew: 0 };
+      const skewSetter = gsap.quickSetter("[data-skew-card]", "skewX", "deg");
+      const clamp = gsap.utils.clamp(-6, 6);
+
+      ScrollTrigger.create({
+        trigger: container,
+        start: "top top",
+        end: () => `+=${scrollAmount * 1.5}`,
+        onUpdate: (self) => {
+          const skew = clamp(self.getVelocity() / 350);
+          if (Math.abs(skew) > Math.abs(skewProxy.skew)) {
+            skewProxy.skew = skew;
+            gsap.to(skewProxy, {
+              skew: 0,
+              duration: 0.8,
+              ease: "power3.out",
+              overwrite: "auto",
+              onUpdate: () => skewSetter(skewProxy.skew),
+            });
+          }
+        },
+      });
+
+      // 3. Bleed Background & Counter Setup
+      // Bleed hues: Pink, Lavender, Peach, Mint, Magenta, Cyan
+      const bleedColors = [
+        "rgba(251, 251, 250, 0)", // Intro (None)
+        "rgba(224, 83, 125, 0.08)", // Lumen
+        "rgba(156, 139, 200, 0.08)", // Noctis
+        "rgba(229, 159, 123, 0.08)", // Orbit
+        "rgba(145, 196, 181, 0.08)", // Verdant
+        "rgba(244, 114, 182, 0.08)", // Atelier
+        "rgba(94, 231, 255, 0.08)", // Halo
+      ];
+
+      const panels = gsap.utils.toArray("[data-panel]");
+      panels.forEach((panel: any, i: number) => {
+        ScrollTrigger.create({
+          trigger: panel,
+          containerAnimation: horizontalTween,
+          start: "left center",
+          end: "right center",
+          onToggle: (self) => {
+            if (self.isActive) {
+              // Fade the bleed overlay to the active slide's signature glow color
+              gsap.to(bleedRef.current, {
+                backgroundColor: bleedColors[i],
+                duration: 0.8,
+                ease: "power2.out",
+              });
+
+              // Slide Counter logic
+              if (i > 0) {
+                setCounter(`0${i} / 0${projects.length}`);
+              } else {
+                setCounter("");
+              }
+            }
+          },
+        });
+
+        // 4. Mockup Content Inner Parallax
+        const parallaxInner = panel.querySelector("[data-parallax-inner]");
+        if (parallaxInner) {
+          gsap.fromTo(
+            parallaxInner,
+            { x: -35 },
+            {
+              x: 35,
+              ease: "none",
+              scrollTrigger: {
+                trigger: panel,
+                containerAnimation: horizontalTween,
+                start: "left right",
+                end: "right left",
+                scrub: true,
+              },
+            }
+          );
+        }
+      });
     }, container);
 
     return () => ctx.revert();
   }, [projects]);
 
-  // Saturated brand backgrounds that cycle: pink, teal, lavender, peach, ochre, coral
+  // Premium, saturated brand backgrounds for individual cards
   const bgClasses = [
-    "bg-[var(--brand-pink)] text-white",
-    "bg-[var(--brand-teal)] text-white",
-    "bg-[var(--brand-lavender)] text-black",
-    "bg-[var(--brand-peach)] text-black",
-    "bg-[var(--brand-ochre)] text-black",
-    "bg-[var(--brand-coral)] text-white",
+    "bg-[var(--brand-pink)] text-white border-pink-500/10",
+    "bg-[var(--brand-teal)] text-white border-teal-500/10",
+    "bg-[var(--brand-lavender)] text-black border-purple-500/10",
+    "bg-[var(--brand-peach)] text-black border-orange-500/10",
+    "bg-[var(--brand-ochre)] text-black border-yellow-500/10",
+    "bg-[var(--brand-coral)] text-white border-red-500/10",
+  ];
+
+  const glowHues = [
+    340, // Lumen (Pinkish)
+    260, // Noctis (Lavender)
+    20,  // Orbit (Peach)
+    150, // Verdant (Mint)
+    320, // Atelier (Pinkish)
+    190, // Halo (Cyan)
   ];
 
   return (
-    <div ref={containerRef} className="relative h-screen overflow-hidden bg-background">
-      {/* Scroll indicator */}
+    <div ref={containerRef} className="relative h-screen overflow-hidden bg-background transition-colors duration-700">
+      {/* Dynamic Color Bleed Overlay */}
+      <div
+        ref={bleedRef}
+        className="absolute inset-0 pointer-events-none transition-all duration-700 mix-blend-multiply dark:mix-blend-screen z-[1]"
+      />
+
+      {/* Slide Navigation & Info indicator */}
       <div className="absolute top-28 left-6 md:left-12 z-20 flex items-center gap-3">
         <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
         <span className="text-xs uppercase tracking-[0.25em] text-muted-foreground font-mono">
-          Scroll vertically to explore cases
+          Scroll vertically to slide cases
         </span>
       </div>
 
-      <div ref={scrollRef} className="flex h-full w-max items-center">
+      {/* Floating Awwwards-style large active counter */}
+      {counter && (
+        <div className="absolute bottom-12 left-6 md:left-12 z-20 font-mono text-xs md:text-sm tracking-[0.3em] text-muted-foreground uppercase opacity-85 select-none animate-in fade-in slide-in-from-bottom-2 duration-500">
+          PROJECT: <span className="text-foreground font-bold">{counter}</span>
+        </div>
+      )}
+
+      <div ref={scrollRef} className="flex h-full w-max items-center relative z-10">
         {/* Intro Slide */}
         <div
           data-panel
@@ -78,14 +187,15 @@ export function ScrollStoryHorizontal({ projects }: ScrollStoryHorizontalProps) 
             Every website we build is a storytelling engine. We design for clarity, feel, and performance.
           </p>
           <div className="mt-12 flex items-center gap-4 text-sm font-semibold text-foreground/50">
-            <span>Drag or scroll down</span>
-            <span className="text-[var(--cyan)] text-lg">→</span>
+            <span>Scroll down or scroll wheel</span>
+            <span className="text-[var(--cyan)] text-lg animate-bounce-horizontal">→</span>
           </div>
         </div>
 
         {/* Project Slides */}
         {projects.map((p, index) => {
           const cardBg = bgClasses[index % bgClasses.length];
+          const glowHue = glowHues[index % glowHues.length];
           return (
             <div
               key={p.slug}
@@ -93,7 +203,8 @@ export function ScrollStoryHorizontal({ projects }: ScrollStoryHorizontalProps) 
               className="w-screen h-screen flex-shrink-0 flex items-center justify-center px-4 md:px-16"
             >
               <div
-                className={`w-full max-w-6xl min-h-[75vh] md:min-h-0 md:aspect-[16/9] rounded-xl p-6 md:p-14 grid md:grid-cols-12 gap-6 md:gap-12 items-center overflow-y-auto md:overflow-hidden border border-border/10 shadow-elegant ${cardBg}`}
+                data-skew-card
+                className={`w-full max-w-6xl min-h-[75vh] md:min-h-0 md:aspect-[16/9] rounded-xl p-6 md:p-14 grid md:grid-cols-12 gap-6 md:gap-12 items-center overflow-y-auto md:overflow-hidden border border-border/10 shadow-elegant ${cardBg} transition-transform duration-200`}
               >
                 {/* Left side: Case Study Metadata */}
                 <div className="md:col-span-5 flex flex-col h-full justify-between py-2">
@@ -122,122 +233,125 @@ export function ScrollStoryHorizontal({ projects }: ScrollStoryHorizontalProps) 
                   <Link
                     to="/work/$slug"
                     params={{ slug: p.slug }}
+                    data-cursor-text="EXPLORE"
                     className="inline-flex items-center gap-2 group self-start border-b-2 border-current pb-1 text-sm font-bold tracking-wider uppercase transition-all hover:gap-3"
                   >
                     Explore case <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                   </Link>
                 </div>
 
-                {/* Right side: High-fidelity CSS Mockup (No Placeholders or 3D) */}
-                <div className="md:col-span-7 h-full flex items-center justify-center relative">
-                  <div className="w-full h-full bg-black/10 backdrop-blur-md rounded-2xl border border-white/10 p-6 flex flex-col justify-between overflow-hidden shadow-2xl relative">
-                    
-                    {/* Window Controls */}
-                    <div className="flex items-center justify-between pb-4 border-b border-white/10">
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-3 h-3 rounded-full bg-white/20" />
-                        <span className="w-3 h-3 rounded-full bg-white/20" />
-                        <span className="w-3 h-3 rounded-full bg-white/20" />
-                      </div>
-                      <span className="text-[10px] font-mono tracking-widest opacity-40">ORIVON.STUDIO // {p.slug.toUpperCase()}</span>
-                    </div>
-
-                    {/* CSS Vector Content tailored to each case */}
-                    <div className="flex-1 flex items-center justify-center py-6 relative">
-                      {p.slug === "lumen-finance" && (
-                        <div className="w-full max-w-sm space-y-4">
-                          <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
-                            <span className="text-xs opacity-60 font-mono">FINANCE_CAPITAL</span>
-                            <span className="text-base font-bold font-mono">$842,912.00</span>
-                          </div>
-                          {/* Mini styled chart */}
-                          <div className="h-28 flex items-end justify-between gap-1.5 pt-4">
-                            {[40, 25, 55, 30, 85, 45, 95, 60, 110, 75, 120].map((val, i) => (
-                              <div
-                                key={i}
-                                className="w-full bg-gradient-to-t from-[var(--brand-pink)] to-white/40 rounded-t-sm transition-all duration-500 hover:opacity-100"
-                                style={{ height: `${(val / 120) * 100}%`, opacity: 0.3 + (i * 0.05) }}
-                              />
-                            ))}
-                          </div>
+                {/* Right side: High-fidelity Vector Mockup Card with Spotlight and Parallax */}
+                <div className="md:col-span-7 h-full flex items-center justify-center relative overflow-hidden rounded-2xl">
+                  <SpotlightCard glowHue={glowHue} className="w-full h-full bg-black/10 border-white/10 p-0 flex flex-col justify-between overflow-hidden shadow-2xl relative">
+                    <div className="p-6 h-full flex flex-col justify-between" data-parallax-inner>
+                      
+                      {/* Window Controls */}
+                      <div className="flex items-center justify-between pb-4 border-b border-white/10">
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-3 h-3 rounded-full bg-white/20" />
+                          <span className="w-3 h-3 rounded-full bg-white/20" />
+                          <span className="w-3 h-3 rounded-full bg-white/20" />
                         </div>
-                      )}
+                        <span className="text-[10px] font-mono tracking-widest opacity-40">ORIVON.STUDIO // {p.slug.toUpperCase()}</span>
+                      </div>
 
-                      {p.slug === "noctis-music" && (
-                        <div className="w-full flex flex-col items-center justify-center space-y-4">
-                          <div className="relative w-32 h-32 rounded-full border-4 border-dashed border-white/20 flex items-center justify-center animate-[spin_20s_linear_infinite]">
-                            <div className="w-16 h-16 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
-                              <span className="w-4 h-4 rounded-full bg-white/50" />
+                      {/* CSS Vector Content tailored to each case */}
+                      <div className="flex-1 flex items-center justify-center py-6 relative">
+                        {p.slug === "lumen-finance" && (
+                          <div className="w-full max-w-sm space-y-4">
+                            <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+                              <span className="text-xs opacity-60 font-mono">FINANCE_CAPITAL</span>
+                              <span className="text-base font-bold font-mono">$842,912.00</span>
+                            </div>
+                            {/* Mini styled chart */}
+                            <div className="h-28 flex items-end justify-between gap-1.5 pt-4">
+                              {[40, 25, 55, 30, 85, 45, 95, 60, 110, 75, 120].map((val, i) => (
+                                <div
+                                  key={i}
+                                  className="w-full bg-gradient-to-t from-[var(--brand-pink)] to-white/40 rounded-t-sm transition-all duration-500 hover:opacity-100"
+                                  style={{ height: `${(val / 120) * 100}%`, opacity: 0.3 + (i * 0.05) }}
+                                />
+                              ))}
                             </div>
                           </div>
-                          {/* Equalizer lines */}
-                          <div className="flex items-center gap-1.5 h-6">
-                            {[10, 18, 14, 24, 8, 16, 22, 12].map((h, i) => (
-                              <div
-                                key={i}
-                                className="w-1 bg-white/70 rounded-full animate-pulse"
-                                style={{ height: `${h}px`, animationDelay: `${i * 0.15}s` }}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                      )}
+                        )}
 
-                      {p.slug === "orbit-aerospace" && (
-                        <div className="w-full max-w-xs space-y-6 text-left">
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-mono opacity-50">ORBIT_TRACKER</span>
-                            <span className="text-xs font-mono text-[var(--brand-peach)]">L-04:12:05</span>
+                        {p.slug === "noctis-music" && (
+                          <div className="w-full flex flex-col items-center justify-center space-y-4">
+                            <div className="relative w-32 h-32 rounded-full border-4 border-dashed border-white/20 flex items-center justify-center animate-[spin_20s_linear_infinite]">
+                              <div className="w-16 h-16 rounded-full bg-white/10 border border-white/20 flex items-center justify-center">
+                                <span className="w-4 h-4 rounded-full bg-white/50" />
+                              </div>
+                            </div>
+                            {/* Equalizer lines */}
+                            <div className="flex items-center gap-1.5 h-6">
+                              {[10, 18, 14, 24, 8, 16, 22, 12].map((h, i) => (
+                                <div
+                                  key={i}
+                                  className="w-1 bg-white/70 rounded-full animate-pulse"
+                                  style={{ height: `${h}px`, animationDelay: `${i * 0.15}s` }}
+                                />
+                              ))}
+                            </div>
                           </div>
-                          {/* Orbital path */}
-                          <div className="relative h-24 border border-white/10 rounded-xl overflow-hidden flex items-center justify-center">
-                            <div className="absolute w-40 h-40 rounded-full border border-white/20 -bottom-28 animate-[spin_60s_linear_infinite]" />
-                            <div className="absolute w-3 h-3 rounded-full bg-[var(--brand-peach)] shadow-[0_0_15px_#ffb084]" />
-                            <span className="text-[10px] font-mono opacity-30 absolute bottom-2 right-2">ALT. 408KM</span>
-                          </div>
-                        </div>
-                      )}
+                        )}
 
-                      {p.slug === "verdant-eco" && (
-                        <div className="w-full max-w-xs space-y-4">
-                          <div className="text-center font-display text-2xl font-bold opacity-80">98.4%</div>
-                          <p className="text-[10px] font-mono text-center opacity-50 uppercase tracking-widest">ECO_REDUCTION_TARGET</p>
-                          <div className="w-full bg-white/10 h-3 rounded-full overflow-hidden p-0.5 border border-white/15">
-                            <div className="bg-white/80 h-full rounded-full" style={{ width: "98.4%" }} />
+                        {p.slug === "orbit-aerospace" && (
+                          <div className="w-full max-w-xs space-y-6 text-left">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs font-mono opacity-50">ORBIT_TRACKER</span>
+                              <span className="text-xs font-mono text-[var(--brand-peach)]">L-04:12:05</span>
+                            </div>
+                            {/* Orbital path */}
+                            <div className="relative h-24 border border-white/10 rounded-xl overflow-hidden flex items-center justify-center">
+                              <div className="absolute w-40 h-40 rounded-full border border-white/20 -bottom-28 animate-[spin_60s_linear_infinite]" />
+                              <div className="absolute w-3 h-3 rounded-full bg-[var(--brand-peach)] shadow-[0_0_15px_#ffb084]" />
+                              <span className="text-[10px] font-mono opacity-30 absolute bottom-2 right-2">ALT. 408KM</span>
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
 
-                      {p.slug === "atelier-fashion" && (
-                        <div className="w-full max-w-sm grid grid-cols-2 gap-4">
-                          <div className="border border-white/10 rounded-lg p-3 flex flex-col justify-between aspect-square bg-white/5">
-                            <span className="text-[10px] font-mono opacity-40">01 / CAPE</span>
-                            <span className="font-display text-lg font-medium opacity-80">ATELIER CAFE</span>
+                        {p.slug === "verdant-eco" && (
+                          <div className="w-full max-w-xs space-y-4">
+                            <div className="text-center font-display text-2xl font-bold opacity-80">98.4%</div>
+                            <p className="text-[10px] font-mono text-center opacity-50 uppercase tracking-widest">ECO_REDUCTION_TARGET</p>
+                            <div className="w-full bg-white/10 h-3 rounded-full overflow-hidden p-0.5 border border-white/15">
+                              <div className="bg-white/80 h-full rounded-full" style={{ width: "98.4%" }} />
+                            </div>
                           </div>
-                          <div className="border border-white/10 rounded-lg p-3 flex flex-col justify-between aspect-square bg-white/5">
-                            <span className="text-[10px] font-mono opacity-40">02 / SILK</span>
-                            <span className="font-display text-lg font-medium opacity-80">COUTURE NOIR</span>
-                          </div>
-                        </div>
-                      )}
+                        )}
 
-                      {p.slug === "halo-health" && (
-                        <div className="w-full flex flex-col items-center space-y-3">
-                          {/* Pulsing breathing ring */}
-                          <div className="w-24 h-24 rounded-full bg-white/5 border border-white/10 flex items-center justify-center animate-ping">
-                            <div className="w-16 h-16 rounded-full bg-white/10" />
+                        {p.slug === "atelier-fashion" && (
+                          <div className="w-full max-w-sm grid grid-cols-2 gap-4">
+                            <div className="border border-white/10 rounded-lg p-3 flex flex-col justify-between aspect-square bg-white/5">
+                              <span className="text-[10px] font-mono opacity-40">01 / CAPE</span>
+                              <span className="font-display text-lg font-medium opacity-80">ATELIER CAFE</span>
+                            </div>
+                            <div className="border border-white/10 rounded-lg p-3 flex flex-col justify-between aspect-square bg-white/5">
+                              <span className="text-[10px] font-mono opacity-40">02 / SILK</span>
+                              <span className="font-display text-lg font-medium opacity-80">COUTURE NOIR</span>
+                            </div>
                           </div>
-                          <span className="text-xs font-mono opacity-50">INHALE ... EXHALE</span>
-                        </div>
-                      )}
+                        )}
+
+                        {p.slug === "halo-health" && (
+                          <div className="w-full flex flex-col items-center space-y-3">
+                            <div className="w-24 h-24 rounded-full bg-white/5 border border-white/10 flex items-center justify-center animate-ping">
+                              <div className="w-16 h-16 rounded-full bg-white/10" />
+                            </div>
+                            <span className="text-xs font-mono opacity-50">INHALE ... EXHALE</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Footer Row */}
+                      <div className="flex justify-between items-center text-[9px] font-mono opacity-40">
+                        <span>CRAFTED IN ORIVON LABS</span>
+                        <span>©2026 // ALL RIGHTS RESERVED</span>
+                      </div>
+
                     </div>
-
-                    {/* Footer Row */}
-                    <div className="flex justify-between items-center text-[9px] font-mono opacity-40">
-                      <span>CRAFTED IN ORIVON LABS</span>
-                      <span>©2026 // ALL RIGHTS RESERVED</span>
-                    </div>
-                  </div>
+                  </SpotlightCard>
                 </div>
 
               </div>

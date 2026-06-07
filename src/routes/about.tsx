@@ -13,17 +13,6 @@ if (typeof window !== "undefined") {
 }
 
 export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
-      { title: "About — Orivon Studio" },
-      {
-        name: "description",
-        content: "An independent design studio of seven obsessives based between London and Lisbon.",
-      },
-      { property: "og:title", content: "About — Orivon Studio" },
-      { property: "og:description", content: "Meet the studio behind Orivon." },
-    ],
-  }),
   component: About,
 });
 
