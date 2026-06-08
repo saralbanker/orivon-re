@@ -1,6 +1,7 @@
-import { useRef, useMemo } from "react";
+import { useRef, useMemo, useState, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { useLocation } from "@tanstack/react-router";
 
 // 3D Simplex noise shader source code
 const vertexShader = `
@@ -133,14 +134,17 @@ function BlobMesh() {
   const color1 = useMemo(() => new THREE.Color("#e0537d"), []);
   const color2 = useMemo(() => new THREE.Color("#9c8bc8"), []);
 
-  const uniforms = useMemo(() => ({
-    uTime: { value: 0 },
-    uNoiseSpeed: { value: 0.45 },
-    uNoiseStrength: { value: 0.25 },
-    uNoiseFrequency: { value: 1.2 },
-    uColor1: { value: color1 },
-    uColor2: { value: color2 },
-  }), [color1, color2]);
+  const uniforms = useMemo(
+    () => ({
+      uTime: { value: 0 },
+      uNoiseSpeed: { value: 0.45 },
+      uNoiseStrength: { value: 0.25 },
+      uNoiseFrequency: { value: 1.2 },
+      uColor1: { value: color1 },
+      uColor2: { value: color2 },
+    }),
+    [color1, color2],
+  );
 
   useFrame((state) => {
     const time = state.clock.getElapsedTime();
@@ -161,8 +165,8 @@ function BlobMesh() {
 
   return (
     <mesh ref={meshRef} position={[0, 0, 0]} scale={[1.8, 1.8, 1.8]}>
-      {/* High density sphere for ultra-smooth vertex displacements */}
-      <sphereGeometry args={[1, 128, 128]} />
+      {/* Optimized sphere segments for rendering performance */}
+      <sphereGeometry args={[1, 64, 64]} />
       <shaderMaterial
         ref={materialRef}
         vertexShader={vertexShader}
@@ -175,11 +179,37 @@ function BlobMesh() {
 }
 
 export function MorphingBlob() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(true);
+  const location = useLocation();
+  const isHome = location.pathname === "/";
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.05 },
+    );
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  const frameloopActive = isVisible && isHome;
+
   return (
-    <div className="absolute inset-0 w-full h-full -z-10 pointer-events-none overflow-hidden">
+    <div
+      ref={containerRef}
+      className="absolute inset-0 w-full h-full -z-10 pointer-events-none overflow-hidden"
+    >
       <Canvas
         camera={{ position: [0, 0, 4.5], fov: 45 }}
         style={{ pointerEvents: "none" }}
+        frameloop={frameloopActive ? "always" : "never"}
       >
         <ambientLight intensity={0.45} />
         <directionalLight position={[10, 10, 5]} intensity={1.5} />

@@ -106,7 +106,7 @@ function About() {
               end: "top 55%",
               scrub: true,
             },
-          }
+          },
         );
       });
     }, historyRef);
@@ -140,7 +140,8 @@ function About() {
             </p>
             <p>
               We believe great work is the result of taste, craft, and conviction — held in tension
-              with curiosity and discipline. We design layouts that act as storytelling narratives, rejecting standard stock layouts.
+              with curiosity and discipline. We design layouts that act as storytelling narratives,
+              rejecting standard stock layouts.
             </p>
             <p>
               Since 2013, we've shipped 180+ projects for clients across fintech, fashion,
@@ -158,9 +159,12 @@ function About() {
             className="relative aspect-[4/3] rounded-xl bg-[var(--brand-teal)] text-white p-10 flex flex-col justify-between border border-border"
           >
             <div className="relative z-10">
-              <span className="text-[10px] font-mono opacity-60 uppercase tracking-widest block mb-4">OUR PRINCIPLE // 01</span>
+              <span className="text-[10px] font-mono opacity-60 uppercase tracking-widest block mb-4">
+                OUR PRINCIPLE // 01
+              </span>
               <h3 className="font-serif text-3xl font-normal leading-tight">
-                "We say no to a lot, so we can say <em className="italic text-[var(--brand-peach)]">yes well</em>."
+                "We say no to a lot, so we can say{" "}
+                <em className="italic text-[var(--brand-peach)]">yes well</em>."
               </h3>
             </div>
             <div className="relative z-10 flex justify-between items-center text-[10px] font-mono opacity-60">
@@ -178,7 +182,10 @@ function About() {
           <p className="text-muted-foreground max-w-2xl mb-8">
             Seven obsessives, one studio. Standard typographic layout cards represent our leads.
           </p>
-          <div className="rounded-xl border border-border bg-[var(--card)] overflow-hidden" data-cursor-text="LEADS">
+          <div
+            className="rounded-xl border border-border bg-[var(--card)] overflow-hidden"
+            data-cursor-text="LEADS"
+          >
             <AnimatedTestimonials testimonials={TEAM} autoplay />
           </div>
         </div>
@@ -230,7 +237,9 @@ function About() {
             { t: "Conviction", c: "We believe in what we build and design for longevity." },
           ].map((v) => (
             <SpotlightCard key={v.t} className="p-8 bg-[var(--card)] border border-border">
-              <h3 className="font-serif text-2xl font-normal mb-3 text-[var(--brand-pink)]">{v.t}</h3>
+              <h3 className="font-serif text-2xl font-normal mb-3 text-[var(--brand-pink)]">
+                {v.t}
+              </h3>
               <p className="text-muted-foreground text-sm font-sans">{v.c}</p>
             </SpotlightCard>
           ))}

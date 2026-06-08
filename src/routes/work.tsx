@@ -20,12 +20,18 @@ const brandColors: Record<string, { bg: string; text: string; details: string }>
 };
 
 const brandCovers: Record<string, string> = {
-  "lumen-finance": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
-  "noctis-music": "https://images.unsplash.com/photo-1539635278303-d4002c07eae3?auto=format&fit=crop&w=800&q=80",
-  "orbit-aerospace": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",
-  "verdant-eco": "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&w=800&q=80",
-  "atelier-fashion": "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80",
-  "halo-health": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80",
+  "lumen-finance":
+    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
+  "noctis-music":
+    "https://images.unsplash.com/photo-1539635278303-d4002c07eae3?auto=format&fit=crop&w=800&q=80",
+  "orbit-aerospace":
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80",
+  "verdant-eco":
+    "https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?auto=format&fit=crop&w=800&q=80",
+  "atelier-fashion":
+    "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80",
+  "halo-health":
+    "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80",
 };
 
 function WorkPage() {
@@ -45,7 +51,8 @@ function WorkPage() {
           className="font-display text-6xl md:text-9xl font-bold leading-[0.9]"
         />
         <p className="mt-8 max-w-xl text-lg text-muted-foreground">
-          A handful of recent projects across brand, web and product. Eached design is custom-built with pure CSS and typographic grids, completely free of placeholders.
+          A handful of recent projects across brand, web and product. Eached design is custom-built
+          with pure CSS and typographic grids, completely free of placeholders.
         </p>
 
         <div className="flex flex-wrap gap-2 mt-12">
@@ -66,7 +73,11 @@ function WorkPage() {
 
         <div className="mt-16 grid md:grid-cols-2 gap-x-8 gap-y-16">
           {items.map((p, i) => {
-            const colors = brandColors[p.slug] || { bg: "bg-[var(--brand-pink)]", text: "text-white", details: "CASE_STUDY" };
+            const colors = brandColors[p.slug] || {
+              bg: "bg-[var(--brand-pink)]",
+              text: "text-white",
+              details: "CASE_STUDY",
+            };
             const coverUrl = brandCovers[p.slug];
             return (
               <motion.div
@@ -77,30 +88,32 @@ function WorkPage() {
                 transition={{ duration: 0.6, delay: (i % 2) * 0.1 }}
                 className={i % 2 === 1 ? "md:translate-y-20" : ""}
               >
-                <Link
-                  to="/work/$slug"
-                  params={{ slug: p.slug }}
-                  className="group block"
-                >
+                <Link to="/work/$slug" params={{ slug: p.slug }} className="group block">
                   {/* Human-made editorial cover card with background image overlay */}
-                  <div 
+                  <div
                     className={`relative overflow-hidden rounded-xl aspect-[4/3] p-8 border border-border/10 flex flex-col justify-between shadow-elegant transition-transform duration-700 group-hover:scale-[1.02] ${colors.bg} ${colors.text}`}
                   >
                     {/* Desaturated background photograph */}
                     {coverUrl && (
-                      <img 
-                        src={coverUrl} 
+                      <img
+                        src={coverUrl}
                         alt=""
                         className="absolute inset-0 w-full h-full object-cover saturate-50 contrast-[1.1] opacity-35 mix-blend-multiply transition-opacity duration-700 group-hover:opacity-50"
                       />
                     )}
-                    
+
                     {/* Top row */}
                     <div className="relative z-10 flex items-center justify-between opacity-90 font-mono text-xs">
-                      <span>{colors.details} // 0{i+1}</span>
+                      <span>
+                        {colors.details} // 0{i + 1}
+                      </span>
                       <div className="flex gap-2">
-                        <span className="border border-current/30 rounded-full px-2 py-0.5">{p.category}</span>
-                        <span className="border border-current/30 rounded-full px-2 py-0.5">{p.year}</span>
+                        <span className="border border-current/30 rounded-full px-2 py-0.5">
+                          {p.category}
+                        </span>
+                        <span className="border border-current/30 rounded-full px-2 py-0.5">
+                          {p.year}
+                        </span>
                       </div>
                     </div>
 

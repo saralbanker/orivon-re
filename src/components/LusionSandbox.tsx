@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Play, RotateCcw, Shield, Zap } from "lucide-react";
+import { useLocation } from "@tanstack/react-router";
 
 type Particle = {
   x: number;
@@ -22,7 +23,7 @@ type Ripple = {
 };
 
 const SHAPES = ["orivon", "craft", "grid", "free"] as const;
-type ShapeType = typeof SHAPES[number];
+type ShapeType = (typeof SHAPES)[number];
 
 interface LusionSandboxProps {
   isHeroBg?: boolean;
@@ -32,7 +33,7 @@ const getTargetPositions = (
   shapeName: ShapeType,
   w: number,
   h: number,
-  particleCount: number
+  particleCount: number,
 ): { x: number; y: number }[] => {
   const points: { x: number; y: number }[] = [];
 
@@ -130,9 +131,12 @@ const getTargetPositions = (
 export function LusionSandbox({ isHeroBg = false }: LusionSandboxProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const isVisible = useRef(true);
   const [mode, setMode] = useState<"repel" | "attract" | "gravity">("repel");
   const [shape, setShape] = useState<ShapeType>("orivon");
-  
+  const location = useLocation();
+  const isHome = location.pathname === "/";
+
   // Dense particle parameters for full page background
   const particleCount = isHeroBg ? 1200 : 800;
   const gravityForce = 0.04;
@@ -142,45 +146,63 @@ export function LusionSandbox({ isHeroBg = false }: LusionSandboxProps) {
   const ripples = useRef<Ripple[]>([]);
   const mouse = useRef({ x: -1000, y: -1000, active: false });
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisible.current = entry.isIntersecting;
+      },
+      { threshold: 0.05 },
+    );
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   // Initialize particles
-  const initParticles = (width: number, height: number) => {
-    const arr: Particle[] = [];
-    const colors = ["#e0537d", "#9c8bc8", "#e59f7b", "#91c4b5", "#eaeaea"];
-    
-    for (let i = 0; i < particleCount; i++) {
-      const rx = Math.random() * width;
-      const ry = Math.random() * height;
-      arr.push({
-        x: rx,
-        y: ry,
-        baseX: rx,
-        baseY: ry,
-        vx: 0,
-        vy: 0,
-        size: Math.random() * 2.2 + 0.8,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        alpha: isHeroBg ? Math.random() * 0.25 + 0.15 : Math.random() * 0.5 + 0.4, // lower opacity behind text
-      });
-    }
+  const initParticles = useCallback(
+    (width: number, height: number) => {
+      const arr: Particle[] = [];
+      const colors = ["#e0537d", "#9c8bc8", "#e59f7b", "#91c4b5", "#eaeaea"];
 
-    const targets = getTargetPositions(shape, width, height, particleCount);
-    for (let i = 0; i < arr.length; i++) {
-      const target = targets[i % targets.length];
-      arr[i].baseX = target.x;
-      arr[i].baseY = target.y;
-    }
+      for (let i = 0; i < particleCount; i++) {
+        const rx = Math.random() * width;
+        const ry = Math.random() * height;
+        arr.push({
+          x: rx,
+          y: ry,
+          baseX: rx,
+          baseY: ry,
+          vx: 0,
+          vy: 0,
+          size: Math.random() * 2.2 + 0.8,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: isHeroBg ? Math.random() * 0.25 + 0.15 : Math.random() * 0.5 + 0.4, // lower opacity behind text
+        });
+      }
 
-    particles.current = arr;
-  };
+      const targets = getTargetPositions(shape, width, height, particleCount);
+      for (let i = 0; i < arr.length; i++) {
+        const target = targets[i % targets.length];
+        arr[i].baseX = target.x;
+        arr[i].baseY = target.y;
+      }
+
+      particles.current = arr;
+    },
+    [particleCount, isHeroBg, shape],
+  );
 
   // Smoothly morph particles when shape changes without snapping
   useEffect(() => {
-    if (particles.current.length === 0 || !canvasRef.current) return;
+    if (!isHome || particles.current.length === 0 || !canvasRef.current) return;
     const canvas = canvasRef.current;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const cw = canvas.width / dpr;
     const ch = canvas.height / dpr;
-    
+
     const targets = getTargetPositions(shape, cw, ch, particleCount);
     for (let i = 0; i < particles.current.length; i++) {
       const p = particles.current[i];
@@ -188,9 +210,10 @@ export function LusionSandbox({ isHeroBg = false }: LusionSandboxProps) {
       p.baseX = target.x;
       p.baseY = target.y;
     }
-  }, [shape, particleCount]);
+  }, [shape, particleCount, isHome]);
 
   useEffect(() => {
+    if (!isHome) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -209,12 +232,20 @@ export function LusionSandbox({ isHeroBg = false }: LusionSandboxProps) {
       canvas.style.width = `${w}px`;
       canvas.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      
+
       initParticles(w, h);
     };
 
+    let resizeTimeoutId: ReturnType<typeof setTimeout> | null = null;
+    const handleResize = () => {
+      if (resizeTimeoutId) clearTimeout(resizeTimeoutId);
+      resizeTimeoutId = setTimeout(() => {
+        resize();
+      }, 150);
+    };
+
     resize();
-    window.addEventListener("resize", resize);
+    window.addEventListener("resize", handleResize);
 
     // Track mouse globally on window to capture motion behind text layers
     const handleMouseMove = (e: MouseEvent) => {
@@ -234,7 +265,7 @@ export function LusionSandbox({ isHeroBg = false }: LusionSandboxProps) {
       const rect = canvas.getBoundingClientRect();
       const clickX = e.clientX - rect.left;
       const clickY = e.clientY - rect.top;
-      
+
       // Prevent spawning ripples from clicks on HUD buttons
       const target = e.target as HTMLElement;
       if (target && target.closest(".hud-control")) return;
@@ -246,7 +277,7 @@ export function LusionSandbox({ isHeroBg = false }: LusionSandboxProps) {
         maxRadius: isHeroBg ? 350 : 250,
         active: true,
       });
-      
+
       if (ripples.current.length > 5) {
         ripples.current.shift();
       }
@@ -259,6 +290,11 @@ export function LusionSandbox({ isHeroBg = false }: LusionSandboxProps) {
     let rafId = 0;
 
     const tick = () => {
+      if (!isVisible.current) {
+        rafId = requestAnimationFrame(tick);
+        return;
+      }
+
       // Dynamic trail background depending on dark/light mode
       const isDark = document.documentElement.classList.contains("dark");
       ctx.fillStyle = isDark ? "rgba(12, 13, 16, 0.25)" : "rgba(251, 251, 250, 0.25)";
@@ -284,34 +320,39 @@ export function LusionSandbox({ isHeroBg = false }: LusionSandboxProps) {
       const list = particles.current;
       const mx = mouse.current.x;
       const my = mouse.current.y;
+      const activeRipples = ripples.current.filter((r) => r.active);
+      const interactionRadiusSq = interactionRadius * interactionRadius;
 
       for (let i = 0; i < list.length; i++) {
         const p = list[i];
-        
+
         const dx = mx - p.x;
         const dy = my - p.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
+        const distSq = dx * dx + dy * dy;
 
         let forceX = 0;
         let forceY = 0;
 
         // Interactive mouse forces
-        if (dist < interactionRadius && mouse.current.active) {
-          const force = (interactionRadius - dist) / interactionRadius; // 0 to 1
-          
-          if (mode === "repel") {
-            forceX = -(dx / dist) * force * 5.0;
-            forceY = -(dy / dist) * force * 5.0;
-          } else if (mode === "attract") {
-            forceX = (dx / dist) * force * 4.0;
-            forceY = (dy / dist) * force * 4.0;
+        if (distSq < interactionRadiusSq && mouse.current.active) {
+          const dist = Math.sqrt(distSq);
+          if (dist > 0) {
+            const force = (interactionRadius - dist) / interactionRadius; // 0 to 1
+
+            if (mode === "repel") {
+              forceX = -(dx / dist) * force * 5.0;
+              forceY = -(dy / dist) * force * 5.0;
+            } else if (mode === "attract") {
+              forceX = (dx / dist) * force * 4.0;
+              forceY = (dy / dist) * force * 4.0;
+            }
           }
         }
 
         // Mode specific physics behaviors
         if (mode === "gravity") {
           p.vy += gravityForce;
-          
+
           if (p.y >= h - p.size) {
             p.y = h - p.size;
             p.vy *= -0.35; // bounce dampening
@@ -324,25 +365,29 @@ export function LusionSandbox({ isHeroBg = false }: LusionSandboxProps) {
           // Spring force pulling back to grid bases
           const homeDx = p.baseX - p.x;
           const homeDy = p.baseY - p.y;
-          
+
           p.vx += homeDx * 0.035;
           p.vy += homeDy * 0.035;
-          
+
           p.vx *= 0.88;
           p.vy *= 0.88;
         }
 
         // Ripple wave displacement
-        ripples.current.forEach((r) => {
-          if (!r.active) return;
+        activeRipples.forEach((r) => {
           const rdx = p.x - r.x;
           const rdy = p.y - r.y;
-          const rdist = Math.sqrt(rdx * rdx + rdy * rdy);
-          
-          if (Math.abs(rdist - r.radius) < 25) {
-            const rippleForce = (1 - r.radius / r.maxRadius) * 10;
-            p.vx += (rdx / rdist) * rippleForce;
-            p.vy += (rdy / rdist) * rippleForce;
+          const rdistSq = rdx * rdx + rdy * rdy;
+          const minR = Math.max(0, r.radius - 25);
+          const maxR = r.radius + 25;
+
+          if (rdistSq > minR * minR && rdistSq < maxR * maxR) {
+            const rdist = Math.sqrt(rdistSq);
+            if (rdist > 0) {
+              const rippleForce = (1 - r.radius / r.maxRadius) * 10;
+              p.vx += (rdx / rdist) * rippleForce;
+              p.vy += (rdy / rdist) * rippleForce;
+            }
           }
         });
 
@@ -372,12 +417,13 @@ export function LusionSandbox({ isHeroBg = false }: LusionSandboxProps) {
 
     return () => {
       cancelAnimationFrame(rafId);
-      window.removeEventListener("resize", resize);
+      if (resizeTimeoutId) clearTimeout(resizeTimeoutId);
+      window.removeEventListener("resize", handleResize);
       window.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseleave", handleMouseLeave);
       window.removeEventListener("mousedown", handleMouseClick);
     };
-  }, [mode, particleCount, gravityForce, interactionRadius, isHeroBg]);
+  }, [mode, particleCount, gravityForce, interactionRadius, isHeroBg, isHome, initParticles]);
 
   const handleReset = () => {
     if (canvasRef.current) {
@@ -390,13 +436,18 @@ export function LusionSandbox({ isHeroBg = false }: LusionSandboxProps) {
 
   if (isHeroBg) {
     return (
-      <div ref={containerRef} className="absolute inset-0 w-full h-full -z-10 overflow-hidden bg-background">
+      <div
+        ref={containerRef}
+        className="absolute inset-0 w-full h-full -z-10 overflow-hidden bg-background"
+      >
         <canvas ref={canvasRef} className="absolute inset-0 w-full h-full cursor-crosshair" />
-        
+
         {/* Floating HUD controls at the bottom center of the hero section */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex flex-col md:flex-row items-center gap-3 md:gap-4 bg-background/60 backdrop-blur-xl border border-border p-2 md:px-4 md:py-2 rounded-2xl md:rounded-full shadow-elegant hud-control max-w-[90vw] md:max-w-none">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 hidden md:flex flex-col md:flex-row items-center gap-3 md:gap-4 bg-background/60 backdrop-blur-xl border border-border p-2 md:px-4 md:py-2 rounded-2xl md:rounded-full shadow-elegant hud-control max-w-[90vw] md:max-w-none">
           <div className="flex items-center gap-1.5">
-            <span className="text-[8px] font-mono text-muted-foreground uppercase tracking-widest mr-1">PHYS:</span>
+            <span className="text-[8px] font-mono text-muted-foreground uppercase tracking-widest mr-1">
+              PHYS:
+            </span>
             <div className="flex gap-0.5">
               {(["repel", "attract", "gravity"] as const).map((m) => (
                 <button
@@ -420,7 +471,9 @@ export function LusionSandbox({ isHeroBg = false }: LusionSandboxProps) {
           <span className="hidden md:block w-px h-4 bg-border" />
 
           <div className="flex items-center gap-1.5">
-            <span className="text-[8px] font-mono text-muted-foreground uppercase tracking-widest mr-1">SHAPE:</span>
+            <span className="text-[8px] font-mono text-muted-foreground uppercase tracking-widest mr-1">
+              SHAPE:
+            </span>
             <div className="flex gap-0.5">
               {(["orivon", "craft", "grid", "free"] as const).map((s) => (
                 <button
@@ -439,7 +492,7 @@ export function LusionSandbox({ isHeroBg = false }: LusionSandboxProps) {
           </div>
 
           <span className="hidden md:block w-px h-4 bg-border" />
-          
+
           <button
             onClick={handleReset}
             className="p-1.5 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
@@ -453,9 +506,12 @@ export function LusionSandbox({ isHeroBg = false }: LusionSandboxProps) {
   }
 
   return (
-    <div ref={containerRef} className="relative w-full h-full min-h-[350px] bg-[#0c0d10] border border-white/5 rounded-xl overflow-hidden shadow-elegant flex flex-col justify-between p-6">
+    <div
+      ref={containerRef}
+      className="relative w-full h-full min-h-[350px] bg-[#0c0d10] border border-white/5 rounded-xl overflow-hidden shadow-elegant flex flex-col justify-between p-6"
+    >
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full cursor-crosshair z-0" />
-      
+
       {/* Top Overlay HUD */}
       <div className="relative z-10 flex items-center justify-between font-mono text-[9px] tracking-widest text-white/50">
         <span className="flex items-center gap-1.5">
@@ -469,7 +525,9 @@ export function LusionSandbox({ isHeroBg = false }: LusionSandboxProps) {
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-10 opacity-30">
         <div className="text-center space-y-2">
           <p className="font-serif text-lg text-white">Interactive sandbox</p>
-          <p className="font-mono text-[9px] text-white/50 tracking-widest uppercase">click to emit ripples / drag to displace</p>
+          <p className="font-mono text-[9px] text-white/50 tracking-widest uppercase">
+            click to emit ripples / drag to displace
+          </p>
         </div>
       </div>
 
@@ -477,7 +535,9 @@ export function LusionSandbox({ isHeroBg = false }: LusionSandboxProps) {
       <div className="relative z-10 flex flex-col gap-3 border-t border-white/10 pt-4 mt-auto">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-1">
-            <span className="text-[8px] font-mono text-white/40 uppercase tracking-widest mr-1">PHYS:</span>
+            <span className="text-[8px] font-mono text-white/40 uppercase tracking-widest mr-1">
+              PHYS:
+            </span>
             <div className="flex gap-1">
               {(["repel", "attract", "gravity"] as const).map((m) => (
                 <button
@@ -497,7 +557,7 @@ export function LusionSandbox({ isHeroBg = false }: LusionSandboxProps) {
               ))}
             </div>
           </div>
-          
+
           <button
             onClick={handleReset}
             className="p-1.5 rounded bg-white/5 hover:bg-white/10 text-white/60 hover:text-white cursor-pointer transition-colors"
@@ -508,7 +568,9 @@ export function LusionSandbox({ isHeroBg = false }: LusionSandboxProps) {
         </div>
 
         <div className="flex items-center gap-1">
-          <span className="text-[8px] font-mono text-white/40 uppercase tracking-widest mr-1">SHAPE:</span>
+          <span className="text-[8px] font-mono text-white/40 uppercase tracking-widest mr-1">
+            SHAPE:
+          </span>
           <div className="flex flex-wrap gap-1">
             {(["orivon", "craft", "grid", "free"] as const).map((s) => (
               <button

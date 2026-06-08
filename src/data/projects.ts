@@ -58,8 +58,7 @@ export const PROJECTS: Project[] = [
     year: "2024",
     image:
       "https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?w=1600&q=80&auto=format&fit=crop",
-    description:
-      "An interactive impact report turned into a scrollable cinematic experience.",
+    description: "An interactive impact report turned into a scrollable cinematic experience.",
     services: ["Web", "Motion", "Editorial"],
     color: "#34D399",
   },
