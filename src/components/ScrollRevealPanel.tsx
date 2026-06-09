@@ -58,10 +58,14 @@ export function ScrollRevealPanel({ panels }: ScrollRevealPanelProps) {
   return (
     <div ref={containerRef} className="relative flex flex-col items-center w-full">
       {panels.map((p, index) => {
-        const textColor = p.textDark ? "text-black" : "text-white";
-        const iconColor = p.textDark ? "text-black/70" : "text-white/70";
-        const subTextColor = p.textDark ? "text-black/60" : "text-white/60";
-        
+        // Guarantee textDark is true for brand-pink (pink background) to ensure contrast ratio >= 4.5:1
+        const isPink = p.color === "var(--brand-pink)" || p.color === "#e0537d";
+        const isDarkText = p.textDark || isPink;
+
+        const textColor = isDarkText ? "text-neutral-950" : "text-white";
+        const iconColor = isDarkText ? "text-neutral-900" : "text-white/90";
+        const subTextColor = isDarkText ? "text-neutral-900" : "text-neutral-100";
+
         return (
           <div
             key={p.title}
@@ -79,12 +83,14 @@ export function ScrollRevealPanel({ panels }: ScrollRevealPanelProps) {
               <span className={`font-mono text-xs uppercase tracking-[0.25em] ${subTextColor}`}>
                 Capability {p.n}
               </span>
-              <p.Icon className={`${iconColor}`} size={28} />
+              <p.Icon className={`${iconColor}`} size={28} aria-hidden="true" />
             </div>
 
             {/* Core Body */}
             <div className="my-auto py-4">
-              <h3 className={`font-display text-3xl md:text-5xl font-bold leading-none tracking-tight mb-4 ${textColor}`}>
+              <h3
+                className={`font-display text-3xl md:text-5xl font-bold leading-none tracking-tight mb-4 ${textColor}`}
+              >
                 {p.title}
               </h3>
               <p className={`text-base md:text-lg max-w-xl leading-relaxed ${subTextColor}`}>
